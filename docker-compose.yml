@@ -1,6 +1,7 @@
 version: "3"
 services:
   node:
+    image: pedroquessada/my-backend:latest
     build: .
     command: "npm run start"
     working_dir: /home/node/app
