@@ -6,13 +6,14 @@ spec:
   containers:
   - name: my-backend
     image: pedroquessada/my-backend:latest
+    imagePullPolicy: Never
     workingDir: /usr/api
     resources:
       requests:
         memory: "400Mi"
-        cpu: 1
+        cpu: "500m"
       limits:
         memory: "400Mi"
-        cpu: 1
+        cpu: "500m"
     ports:
     - containerPort: 3000

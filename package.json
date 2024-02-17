@@ -1,13 +1,12 @@
 {
-  "name": "backend",
+  "name": "my-backend",
   "version": "1.0.0",
   "description": "",
   "author": "",
   "license": "ISC",
-  "main": "app/app.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node app/app.js"
+    "start": "node app.js"
   },
   "dependencies": {
     "express": "^4.18.2"

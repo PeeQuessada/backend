@@ -2,7 +2,7 @@ version: "3"
 services:
   api:
     build: .
-    container_name: node-api
+    container_name: my-backend
     volumes:
       - .:/usr/api
     ports:

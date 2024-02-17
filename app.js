@@ -5,6 +5,11 @@ app.use(express.json());
 
 const fakeBD = [];
 
+app.get("/", (req, res, next) => {
+    res.send("Hello world");
+});
+
+
 app.get("/get", (req, res, next) => {
     res.status(200).json(fakeBD);
 });
