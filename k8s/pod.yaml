@@ -6,7 +6,6 @@ spec:
   containers:
   - name: my-backend
     image: pedroquessada/my-backend:latest
-    imagePullPolicy: Never
     workingDir: /usr/api
     resources:
       requests:
