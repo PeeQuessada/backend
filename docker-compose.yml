@@ -1,13 +1,9 @@
 version: "3"
 services:
-  node:
-    image: pedroquessada/my-backend:latest
+  api:
     build: .
-    command: "npm run start"
-    working_dir: /home/node/app
-    environment:
-      - NODE_ENV=production
-    expose:
-      - "3000"
+    container_name: node-api
+    volumes:
+      - .:/usr/api
     ports:
       - "3000:3000"
