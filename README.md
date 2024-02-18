@@ -14,6 +14,12 @@ HCL - HashiCorp Configuration Language
         terraform destroy
 
 RUN Kubernets
-    aws eks --region {{us-east-1}} update-kubeconfig --name {{my-eks-cluster}}
-    kubectl apply -f ./k8s/deployment.yaml 
-    kubectl apply -f ./k8s/service.yaml 
+
+    update kubectl
+         aws eks --region {{us-east-1}} update-kubeconfig --name {{my-eks-cluster}}
+    run deployment
+        kubectl apply -f ./k8s/deployment.yaml 
+    run service
+        kubectl apply -f ./k8s/service.yaml   
+    get service
+        kubectl get svc   
