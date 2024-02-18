@@ -6,7 +6,7 @@ app.use(express.json());
 const fakeBD = [];
 
 app.get("/", (req, res, next) => {
-    res.send("Hello world!!!");
+    res.send("Hello world");
 });
 
 
