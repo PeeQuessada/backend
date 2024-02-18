@@ -1,6 +1,6 @@
 First Step
-    Change Main.tf FIle to replace the AccountId (211125361403) with your AccountId
-
+    Change Main.tf 
+        replace the AccountId (211125361403) with your AccountId
 
 HCL - HashiCorp Configuration Language
 
