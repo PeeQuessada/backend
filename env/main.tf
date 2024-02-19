@@ -9,9 +9,9 @@ module "prod" {
     session_token = "FwoGZXIvYXdzEC4aDNr4ZlfhSJGebyHEsyLQAVGH7hqdtn+4CBZSLvQ6viKCR0NKawXbGYCLa5DPMN3pdPdXH6hM+7+BCkpzGcKFcAmsPkm0QutlRPuIQ+oA6/nkJED2YxxowCWkUXXvWnz00am+4PFTK5FlWUdOLWPrCxRIalZLhYG8wrBQVITLARglk755HITE1T4xS/OirdYpTx9cxyT65pmmL9o+99rxli83Cs9XMMkSBWDQF3ua2xYiLP/gNJH3dfEXmG6f/iqLbXogH1j67U06nNj2tSVnDzblxKqyf3rXzFgBnvL4UJUooN3JrgYyLUz3pvzMPvuXoP1C2jAO2lKWa4qtPwrJT/X7YwceMAqfbD0RqXxGwXMaZbi/mg=="
 }
 
-output "endpoint" {
-    value = module.prod.URL
-}
+# output "endpoint" {
+#     value = module.prod.URL
+# }
 
 
 # provider "aws" {

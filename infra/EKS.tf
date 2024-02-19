@@ -8,11 +8,12 @@ module "eks" {
 
   vpc_id     = module.vpc.vpc_id
   subnet_ids = module.vpc.private_subnets
-
-  kms_key_administrators = ["arn:aws:sts::211125361403:assumed-role/voclabs/user3080190=pedro.rafael.quessada@gmail.com"]
+  
+  # iam_role_arn = "arn:aws:sts::211125361403:assumed-role/voclabs/user3080190=pedro.rafael.quessada@gmail.com"
+  # iam_role_name = "arn:aws:iam::211125361403:role/LabRole"
 
   eks_managed_node_groups = {
-    alura = {
+    my-backend = {
       min_size     = 1
       max_size     = 4
       desired_size = 2
@@ -21,3 +22,4 @@ module "eks" {
     }
   }
 }
+
