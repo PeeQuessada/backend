@@ -1,5 +1,5 @@
 # main.tf
-# Configuração do provedor AWS
+#Configuração do provedor AWS
 terraform {
   required_providers {
     aws = {
@@ -125,7 +125,7 @@ resource "aws_security_group" "lb_sg" {
   }
 }
 
-# Liberar tráfego para o LoadBalancer
+# # Liberar tráfego para o LoadBalancer
 resource "aws_security_group_rule" "lb_ingress" {
   security_group_id = aws_security_group.lb_sg.id
   type              = "ingress"
@@ -133,4 +133,114 @@ resource "aws_security_group_rule" "lb_ingress" {
   to_port           = 3000
   protocol          = "tcp"
   cidr_blocks       = ["0.0.0.0/0"]
+}
+
+# Deploy k8s
+# Configuração do provedor Kubernetes
+
+provider "kubernetes" {
+  # config_path = "~/.kube/config"
+  host                   = aws_eks_cluster.my_cluster.endpoint
+  cluster_ca_certificate = base64decode(aws_eks_cluster.my_cluster.certificate_authority[0].data)
+  exec {
+    api_version = "client.authentication.k8s.io/v1beta1"
+    args        = ["eks", "get-token", "--cluster-name", "my-eks-cluster"]
+    command     = "aws"
+  }
+}
+
+resource "kubernetes_deployment" "example" {
+  metadata {
+    name = "my-backend"
+    labels = {
+      test = "my-backend"
+    }
+  }
+
+  spec {
+    replicas = 2
+
+    selector {
+      match_labels = {
+        test = "my-backend"
+      }
+    }
+
+    template {
+      metadata {
+        labels = {
+          test = "my-backend"
+        }
+      }
+
+      spec {
+        container {
+          image = "pedroquessada/my-backend:latest"
+          name  = "my-backend"
+
+          resources {
+            limits = {
+              cpu    = "0.5"
+              memory = "512Mi"
+            }
+            requests = {
+              cpu    = "250m"
+              memory = "50Mi"
+            }
+          }
+
+          liveness_probe {
+            http_get {
+              path = "/"
+              port = 3000
+
+              http_header {
+                name  = "X-Custom-Header"
+                value = "Awesome"
+              }
+            }
+
+            initial_delay_seconds = 3
+            period_seconds        = 3
+          }
+        }
+      }
+    }
+  }
+}
+
+resource "kubernetes_service" "example" {
+  metadata {
+    name = "my-backend"
+  }
+  spec {
+    port {
+      port        = 3000
+      target_port = 3000
+    }
+    type = "LoadBalancer"
+  }
+}
+
+
+# Create a local variable for the load balancer name.
+locals {
+  lb_name = split("-", split(".", kubernetes_service.example.status.0.load_balancer.0.ingress.0.hostname).0).0
+}
+
+# Read information about the load balancer using the AWS provider.
+data "aws_elb" "example" {
+  name = local.lb_name
+}
+
+output "load_balancer_name" {
+  value = local.lb_name
+}
+
+output "load_balancer_hostname" {
+  value = kubernetes_service.example.status.0.load_balancer.0.ingress.0.hostname
+}
+
+output "load_balancer_info" {
+  value = data.aws_elb.example
 }
