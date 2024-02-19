@@ -228,26 +228,10 @@ data "aws_elb" "elb" {
   name = local.lb_name
 }
 
-output "load_balancer_name" {
-  value = local.lb_name
-}
-
 output "load_balancer_hostname" {
   value = kubernetes_service.service.status.0.load_balancer.0.ingress.0.hostname
 }
 
 output "load_balancer_info" {
   value = data.aws_elb.elb
-}
-
-data "kubernetes_service" "DNSName" {
-    metadata {
-      name = "load-balancer-my-app"
-    }
-
-    depends_on = [kubernetes_service.service]
-}
-
-output "URL" {
-  value = data.kubernetes_service.DNSName.status
 }
