@@ -193,15 +193,10 @@ resource "kubernetes_deployment" "example" {
             http_get {
               path = "/"
               port = 3000
-
-              http_header {
-                name  = "X-Custom-Header"
-                value = "Awesome"
-              }
             }
 
-            initial_delay_seconds = 3
-            period_seconds        = 3
+            initial_delay_seconds = 600
+            period_seconds        = 60
           }
         }
       }
