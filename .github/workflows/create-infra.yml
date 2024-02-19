@@ -63,15 +63,15 @@ jobs:
           echo "image = \"${{ github.event.inputs.image }}\"" >> terraform.tfvars
           echo "role = \"${{ github.event.inputs.role }}\"" >> terraform.tfvars
 
-  
-      - name: Terraform init and Terraform apply
-        env:
-          REGION: ${{ github.event.inputs.region }}
-          PREFIX: ${{ github.event.inputs.prefix }}
-          REPOSITORY_NAME: ${{ github.event.inputs.repository_name }}
-          CLUSTER_NAME: ${{ github.event.inputs.cluster_name }}
-          IMAGE: ${{ github.event.inputs.image }}
-          ROLE: ${{ github.event.inputs.role }}
+      - name: Terraform init
         run: | 
           terraform init
+
+      - name: Debug
+        run: | 
+          ls -l
+          cat ./infra/terraform.tfvars
+
+      - name: Terraform plan
+        run: | 
           terraform plan -var-file=./infra/terraform.tfvars --auto-approve
