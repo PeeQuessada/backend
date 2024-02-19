@@ -53,6 +53,16 @@ jobs:
         uses: hashicorp/setup-terraform@v1
         with:
           terraform_version: 1.6.1    
+      
+      - name: Update terraform.tfvars
+        run: |
+          echo "region = \"${{ github.event.inputs.region }}\"" > terraform.tfvars
+          echo "prefix = \"${{ github.event.inputs.prefix }}\"" >> terraform.tfvars
+          echo "repository_name = \"${{ github.event.inputs.repository_name }}\"" >> terraform.tfvars
+          echo "cluster_name = \"${{ github.event.inputs.cluster_name }}\"" > terraform.tfvars
+          echo "image = \"${{ github.event.inputs.image }}\"" >> terraform.tfvars
+          echo "role = \"${{ github.event.inputs.role }}\"" >> terraform.tfvars
+
   
       - name: Terraform init and Terraform apply
         env:
@@ -64,10 +74,5 @@ jobs:
           ROLE: ${{ github.event.inputs.role }}
         run: | 
           terraform init
-          terraform apply -auto-approve \
-          region=$REGION \
-          prefix=$PREFIX \
-          repository_name=$REPOSITORY_NAME
-          cluster_name=$CLUSTER_NAME \
-          image=$IMAGE \
-          role=$ROLE
+          terraform plan -auto-approve \
+            -var-file=terraform.tfvars

@@ -1,0 +1,6 @@
+region = ""
+prefix = ""
+repository_name = ""
+cluster_name = ""
+image = ""
+role = ""
