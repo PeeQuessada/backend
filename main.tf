@@ -17,7 +17,7 @@ module "infra" {
     session_token = ""
 }
 
-output "load_balancer_hostname" {
+output "endpoint" {
   value = module.infra.lb_hostname
 }
 

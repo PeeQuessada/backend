@@ -75,7 +75,7 @@ locals {
 }
 
 data "aws_elb" "LoadBalancer" {
-  name = local.lb_name
+  name = split("-", split(".", local.lb_name).0).0
 }
 
 output "lb_hostname" {
