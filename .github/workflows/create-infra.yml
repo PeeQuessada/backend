@@ -74,5 +74,4 @@ jobs:
           ROLE: ${{ github.event.inputs.role }}
         run: | 
           terraform init
-          terraform plan -auto-approve \
-            -var-file=terraform.tfvars
+          terraform plan -var-file=./infra/terraform.tfvars --auto-approve
