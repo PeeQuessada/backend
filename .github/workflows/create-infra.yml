@@ -1,0 +1,73 @@
+name: Create aws resource using terraform
+
+on:
+  workflow_dispatch:
+    inputs:
+      region:
+        description: ''
+        required: true
+        default: 'us-east-1'
+      prefix:
+          description: ''
+          required: true
+          default: 'backend'
+      repository_name:
+        description: ''
+        required: true
+        default: 'backend'
+      cluster_name:
+          description: ''
+          required: true
+          default: 'backend'
+      image:
+        description: ''
+        required: true
+        default: 'pedroquessada/my-backend:latest'
+      role:
+          description: ''
+          required: true
+          default: 'arn:aws:iam::211125361403:role/LabRole'
+
+jobs:
+  apply:
+    name: 'terraform apply'
+    runs-on: ubuntu-20.04
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Install AWS CLI
+        run: |
+          curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+          unzip awscliv2.zip
+          sudo ./aws/install --bin-dir /usr/local/bin --install-dir /usr/local/aws-cli --update
+
+      - name: Setup AWS
+        run: |
+          aws configure set aws_access_key_id ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws configure set aws_secret_access_key ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws configure set aws_session_token ${{ secrets.AWS_SESSION_TOKEN }}
+  
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v1
+        with:
+          terraform_version: 1.6.1    
+  
+      - name: Terraform init and Terraform apply
+        env:
+          REGION: ${{ github.event.inputs.region }}
+          PREFIX: ${{ github.event.inputs.prefix }}
+          REPOSITORY_NAME: ${{ github.event.inputs.repository_name }}
+          CLUSTER_NAME: ${{ github.event.inputs.cluster_name }}
+          IMAGE: ${{ github.event.inputs.image }}
+          ROLE: ${{ github.event.inputs.role }}
+        run: | 
+          terraform init
+          terraform apply -auto-approve \
+          -var="region=$REGION" \
+          -var="prefix=$PREFIX" \
+          -var="repository_name=$REPOSITORY_NAME"
+          -var="cluster_name=$CLUSTER_NAME" \
+          -var="image=$IMAGE" \
+          -var="role=$ROLE"
