@@ -97,43 +97,43 @@ resource "aws_eks_node_group" "node" {
     depends_on = [ 
         # policies
     ]
-    instance_types = ["t3.micro"]
+    instance_types = ["t2.micro"]
 }
 
 #####################################
 
 # Recurso para criar um LoadBalancer público
-resource "aws_lb" "my_lb" {
-  name               = "my-loadbalancer"
-  internal           = false
-  load_balancer_type = "application"
-  security_groups    = [aws_security_group.lb_sg.id]
-  subnets            = aws_subnet.public_subnet[*].id 
+# resource "aws_lb" "my_lb" {
+#   name               = "my-loadbalancer"
+#   internal           = false
+#   load_balancer_type = "application"
+#   security_groups    = [aws_security_group.lb_sg.id]
+#   subnets            = aws_subnet.public_subnet[*].id 
 
-  enable_deletion_protection = false
-}
+#   enable_deletion_protection = false
+# }
 
-# Recurso para criar um Security Group para o LoadBalancer
-resource "aws_security_group" "lb_sg" {
-  vpc_id = aws_vpc.eks_vpc.id
+# # Recurso para criar um Security Group para o LoadBalancer
+# resource "aws_security_group" "lb_sg" {
+#   vpc_id = aws_vpc.eks_vpc.id
 
-  egress {
-    from_port   = 0
-    to_port     = 0
-    protocol    = "-1"
-    cidr_blocks = ["0.0.0.0/0"]
-  }
-}
+#   egress {
+#     from_port   = 0
+#     to_port     = 0
+#     protocol    = "-1"
+#     cidr_blocks = ["0.0.0.0/0"]
+#   }
+# }
 
-# # Liberar tráfego para o LoadBalancer
-resource "aws_security_group_rule" "lb_ingress" {
-  security_group_id = aws_security_group.lb_sg.id
-  type              = "ingress"
-  from_port         = 3000
-  to_port           = 3000
-  protocol          = "tcp"
-  cidr_blocks       = ["0.0.0.0/0"]
-}
+# # # Liberar tráfego para o LoadBalancer
+# resource "aws_security_group_rule" "lb_ingress" {
+#   security_group_id = aws_security_group.lb_sg.id
+#   type              = "ingress"
+#   from_port         = 3000
+#   to_port           = 3000
+#   protocol          = "tcp"
+#   cidr_blocks       = ["0.0.0.0/0"]
+# }
 
 # Deploy k8s
 # Configuração do provedor Kubernetes
@@ -149,11 +149,11 @@ provider "kubernetes" {
   }
 }
 
-resource "kubernetes_deployment" "deployment" {
+resource "kubernetes_deployment" "Application" {
   metadata {
-    name = "my-app"
+    name = "my-backend"
     labels = {
-      test = "my-app"
+      nome = "my-backend"
     }
   }
 
@@ -162,21 +162,21 @@ resource "kubernetes_deployment" "deployment" {
 
     selector {
       match_labels = {
-        test = "my-app"
+        nome = "my-backend"
       }
     }
 
     template {
       metadata {
         labels = {
-          test = "my-app"
+          nome = "my-backend"
         }
       }
 
       spec {
         container {
           image = "pedroquessada/my-backend:latest"
-          name  = "my-app"
+          name  = "my-backend"
 
           resources {
             limits = {
@@ -196,7 +196,7 @@ resource "kubernetes_deployment" "deployment" {
             }
 
             initial_delay_seconds = 600
-            period_seconds        = 60
+            period_seconds        = 300
           }
         }
       }
@@ -204,11 +204,14 @@ resource "kubernetes_deployment" "deployment" {
   }
 }
 
-resource "kubernetes_service" "service" {
+resource "kubernetes_service" "LoadBalancer" {
   metadata {
-    name = "my-app"
+    name = "my-backend"
   }
   spec {
+    selector = {
+      nome = "my-backend"
+    }
     port {
       port        = 3000
       target_port = 3000
@@ -220,18 +223,22 @@ resource "kubernetes_service" "service" {
 
 # Create a local variable for the load balancer name.
 locals {
-  lb_name = split("-", split(".", kubernetes_service.service.status.0.load_balancer.0.ingress.0.hostname).0).0
+  lb_name = split("-", split(".", kubernetes_service.LoadBalancer.status.0.load_balancer.0.ingress.0.hostname).0).0
 }
 
 # Read information about the load balancer using the AWS provider.
-data "aws_elb" "elb" {
+data "aws_elb" "LoadBalancer" {
   name = local.lb_name
 }
 
+output "load_balancer_name" {
+  value = local.lb_name
+}
+
 output "load_balancer_hostname" {
-  value = kubernetes_service.service.status.0.load_balancer.0.ingress.0.hostname
+  value = kubernetes_service.LoadBalancer.status.0.load_balancer.0.ingress.0.hostname
 }
 
 output "load_balancer_info" {
-  value = data.aws_elb.elb
+  value = data.aws_elb.LoadBalancer
 }
