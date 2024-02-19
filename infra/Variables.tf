@@ -1,11 +1,10 @@
 # Define as zonas de disponibilidade
+variable "availability_zones" {
+  default = ["us-east-1a", "us-east-1b", "us-east-1c"]
+}
 variable "region" {
   type = string
   default = "us-east-1"
-}
-
-variable "availability_zones" {
-  default = ["us-east-1a", "us-east-1b", "us-east-1c"]
 }
 
 variable "prefix" {
