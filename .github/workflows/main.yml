@@ -1,18 +1,17 @@
-name: Ci/Cd test
+# name: Ci/Cd test
 
-on: pull_request
+# on: pull_request
 
-jobs:
-  continuos-integration:
-    runs-on: ubuntu-20.04
+# jobs:
+#   continuos-integration:
+#     runs-on: ubuntu-20.04
 
-    steps:
-      - uses: actions/checkout@v3
-      - name: Using Node.js
-        uses: actions/setup-node@v2
-        with:
-          node-version: 20.9.0
-      - name: install, build and run
-        run: |
-          npm install
-          npm run start
+#     steps:
+#       - uses: actions/checkout@v3
+#       - name: Using Node.js
+#         uses: actions/setup-node@v2
+#         with:
+#           node-version: 20.9.0
+#       - name: install, build and run
+#         run: |
+#           npm install
