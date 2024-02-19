@@ -56,12 +56,12 @@ jobs:
       
       - name: Update terraform.tfvars
         run: |
-          echo "region = \"${{ github.event.inputs.region }}\"" >> ./infra/terraform.tfvars
-          echo "prefix = \"${{ github.event.inputs.prefix }}\"" >> ./infra/terraform.tfvars
-          echo "repository_name = \"${{ github.event.inputs.repository_name }}\"" >> ./infra/terraform.tfvars
-          echo "cluster_name = \"${{ github.event.inputs.cluster_name }}\"" >> ./infra/terraform.tfvars
-          echo "image = \"${{ github.event.inputs.image }}\"" >> ./infra/terraform.tfvars
-          echo "role = \"${{ github.event.inputs.role }}\"" >> ./infra/terraform.tfvars
+          echo "region = \"${{ github.event.inputs.region }}\"" >> terraform.tfvars
+          echo "prefix = \"${{ github.event.inputs.prefix }}\"" >> terraform.tfvars
+          echo "repository_name = \"${{ github.event.inputs.repository_name }}\"" >> terraform.tfvars
+          echo "cluster_name = \"${{ github.event.inputs.cluster_name }}\"" >> terraform.tfvars
+          echo "image = \"${{ github.event.inputs.image }}\"" >> terraform.tfvars
+          echo "role = \"${{ github.event.inputs.role }}\"" >> terraform.tfvars
 
       - name: Terraform init
         run: | 
