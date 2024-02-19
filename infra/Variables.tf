@@ -17,3 +17,13 @@ variable "secret_key" {
 variable "session_token" {
   type = string
 }
+
+variable "profile" {
+  type = string
+  default = "arn:aws:sts::211125361403:assumed-role/voclabs/user3080190=pedro.rafael.quessada@gmail.com"
+}
+
+variable "role" {
+  type = string
+  default = "arn:aws:iam::211125361403:role/LabRole"
+}
