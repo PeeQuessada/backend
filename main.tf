@@ -149,11 +149,11 @@ provider "kubernetes" {
   }
 }
 
-resource "kubernetes_deployment" "example" {
+resource "kubernetes_deployment" "deployment" {
   metadata {
-    name = "my-backend"
+    name = "my-app"
     labels = {
-      test = "my-backend"
+      test = "my-app"
     }
   }
 
@@ -162,21 +162,21 @@ resource "kubernetes_deployment" "example" {
 
     selector {
       match_labels = {
-        test = "my-backend"
+        test = "my-app"
       }
     }
 
     template {
       metadata {
         labels = {
-          test = "my-backend"
+          test = "my-app"
         }
       }
 
       spec {
         container {
           image = "pedroquessada/my-backend:latest"
-          name  = "my-backend"
+          name  = "my-app"
 
           resources {
             limits = {
@@ -204,9 +204,9 @@ resource "kubernetes_deployment" "example" {
   }
 }
 
-resource "kubernetes_service" "example" {
+resource "kubernetes_service" "service" {
   metadata {
-    name = "my-backend"
+    name = "my-app"
   }
   spec {
     port {
@@ -220,11 +220,11 @@ resource "kubernetes_service" "example" {
 
 # Create a local variable for the load balancer name.
 locals {
-  lb_name = split("-", split(".", kubernetes_service.example.status.0.load_balancer.0.ingress.0.hostname).0).0
+  lb_name = split("-", split(".", kubernetes_service.service.status.0.load_balancer.0.ingress.0.hostname).0).0
 }
 
 # Read information about the load balancer using the AWS provider.
-data "aws_elb" "example" {
+data "aws_elb" "elb" {
   name = local.lb_name
 }
 
@@ -233,9 +233,21 @@ output "load_balancer_name" {
 }
 
 output "load_balancer_hostname" {
-  value = kubernetes_service.example.status.0.load_balancer.0.ingress.0.hostname
+  value = kubernetes_service.service.status.0.load_balancer.0.ingress.0.hostname
 }
 
 output "load_balancer_info" {
-  value = data.aws_elb.example
+  value = data.aws_elb.elb
+}
+
+data "kubernetes_service" "DNSName" {
+    metadata {
+      name = "load-balancer-my-app"
+    }
+
+    depends_on = [kubernetes_service.service]
+}
+
+output "URL" {
+  value = data.kubernetes_service.DNSName.status
 }
