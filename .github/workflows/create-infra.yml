@@ -65,9 +65,9 @@ jobs:
         run: | 
           terraform init
           terraform apply -auto-approve \
-          -var="region=$REGION" \
-          -var="prefix=$PREFIX" \
-          -var="repository_name=$REPOSITORY_NAME"
-          -var="cluster_name=$CLUSTER_NAME" \
-          -var="image=$IMAGE" \
-          -var="role=$ROLE"
+          region=$REGION \
+          prefix=$PREFIX \
+          repository_name=$REPOSITORY_NAME
+          cluster_name=$CLUSTER_NAME \
+          image=$IMAGE \
+          role=$ROLE
