@@ -53,7 +53,7 @@ resource "kubernetes_deployment" "my-backend" {
   }
 }
 
-resource "kubernetes_service" "LoadBalancer" {
+ resource "kubernetes_service" "LoadBalancer" {
   metadata {
     name = "load-balancer-my-backend"
   }
@@ -69,12 +69,12 @@ resource "kubernetes_service" "LoadBalancer" {
   }
 }
 
-# data "kubernetes_service" "DNSName" {
-#     metadata {
-#       name = "load-balancer-my-backend"
-#     }
-# }
+data "kubernetes_service" "DNSName" {
+    metadata {
+      name = "load-balancer-my-backend"
+    }
+}
 
-# output "URL" {
-#   value = data.kubernetes_service.DNSName.status
-# }
+output "URL" {
+  value = data.kubernetes_service.DNSName.status
+}
