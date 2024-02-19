@@ -1,31 +1,31 @@
-resource "kubernetes_deployment" "my-backend" {
+resource "kubernetes_deployment" "Application" {
   metadata {
-    name = "my-backend"
+    name = "${var.prefix}-${var.repository_name}"
     labels = {
-      nome = "my-backend"
+      nome = "${var.prefix}-${var.repository_name}"
     }
   }
 
   spec {
-    replicas = 3
+    replicas = 2
 
     selector {
       match_labels = {
-        nome = "my-backend"
+        nome = "${var.prefix}-${var.repository_name}"
       }
     }
 
     template {
       metadata {
         labels = {
-          nome = "my-backend"
+          nome = "${var.prefix}-${var.repository_name}"
         }
       }
 
       spec {
         container {
-          image = "pedroquessada/my-backend:latest"
-          name  = "my-backend"
+          image = var.image
+          name  = "${var.prefix}-${var.repository_name}"
 
           resources {
             limits = {
@@ -44,8 +44,8 @@ resource "kubernetes_deployment" "my-backend" {
               port = 3000
             }
 
-            initial_delay_seconds = 3
-            period_seconds        = 3
+            initial_delay_seconds = 600
+            period_seconds        = 300
           }
         }
       }
@@ -53,28 +53,35 @@ resource "kubernetes_deployment" "my-backend" {
   }
 }
 
- resource "kubernetes_service" "LoadBalancer" {
+resource "kubernetes_service" "LoadBalancer" {
   metadata {
-    name = "load-balancer-my-backend"
+    name = "${var.prefix}-${var.repository_name}"
   }
   spec {
     selector = {
-      nome = "my-backend"
+      nome = "${var.prefix}-${var.repository_name}"
     }
     port {
-      port = 3000
+      port        = 3000
       target_port = 3000
     }
     type = "LoadBalancer"
   }
 }
 
-data "kubernetes_service" "DNSName" {
-    metadata {
-      name = "load-balancer-my-backend"
-    }
+
+locals {
+  lb_name = kubernetes_service.LoadBalancer.status.0.load_balancer.0.ingress.0.hostname
 }
 
-output "URL" {
-  value = data.kubernetes_service.DNSName.status
+data "aws_elb" "LoadBalancer" {
+  name = split("-", split(".", local.lb_name).0).0
+}
+
+output "lb_hostname" {
+  value = local.lb_name
+}
+
+output "lb_info" {
+  value = data.aws_elb.LoadBalancer
 }

@@ -1,23 +1,26 @@
-
-module "eks" {
-  source = "terraform-aws-modules/eks/aws"
-
-  cluster_name                    = var.cluster_name
-  cluster_version                 = "1.29"
-  cluster_endpoint_private_access = true
-
-  vpc_id     = module.vpc.vpc_id
-  subnet_ids = module.vpc.private_subnets
-
-  eks_managed_node_groups = {
-    alura = {
-      min_size     = 1
-      max_size     = 4
-      desired_size = 2
-      vpc_security_group_ids = [aws_security_group.ssh_cluster.id]
-      instance_types = ["t2.micro"]
-    }
+# Recurso para criar o cluster EKS
+resource "aws_eks_cluster" "eks_cluster" {
+  name     = "${var.prefix}-${var.repository_name}-${var.cluster_name}"
+  role_arn = var.role # var.role != "" ? var.role : aws_iam_role.eks_cluster.arn
+  vpc_config {
+    subnet_ids = aws_subnet.public_subnet[*].id
   }
+  depends_on = [aws_subnet.public_subnet]
+}
 
-  iam_role_arn = "arn:aws:iam::211125361403:role/LabRole"
+# Recurso para criar um no em cada subrede
+resource "aws_eks_node_group" "node" {
+    cluster_name = aws_eks_cluster.eks_cluster.name
+    node_group_name = "${var.prefix}-${var.repository_name}-${var.cluster_name}"
+    node_role_arn = var.role # var.role != "" ? var.role : aws_iam_role.eks_cluster.arn
+    subnet_ids = aws_subnet.public_subnet[*].id
+    scaling_config {
+        desired_size = 2
+        max_size = 4
+        min_size = 2
+    }
+    depends_on = [ 
+        # policies
+    ]
+    instance_types = ["t2.micro"]
 }
