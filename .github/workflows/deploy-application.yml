@@ -1,0 +1,76 @@
+name: Deploy application to EKS
+env:
+  CI: ""
+on:
+  push:
+    branches: ["application"]
+  workflow_dispatch:
+
+jobs:
+  apply:
+    name: 'Deploy app'
+    runs-on: ubuntu-20.04
+
+    permissions:
+      id-token: write
+      contents: read
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Set up AWS credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-session-token: ${{ secrets.AWS_SESSION_TOKEN }}
+          aws-region: ${{ secrets.REGION }}
+
+      - name: Login to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v1
+        with:
+          registries: ${{ secrets.AWS_USER_ID }}
+          mask-password: "true" # see: https://github.com/aws-actions/amazon-ecr-login#docker-credentials
+
+      - name: Publish docker image on ERS2
+        shell: bash
+        env:
+          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+        run: |
+          docker build -t ${{ secrets.AWS_USER_ID }}.dkr.ecr.${{ secrets.REGION }}.amazonaws.com/${{ secrets.REPOSITORY_NAME }}:${{ github.run_id }} .
+          docker push ${{ secrets.AWS_USER_ID }}.dkr.ecr.${{ secrets.REGION }}.amazonaws.com/${{ secrets.REPOSITORY_NAME }}:${{ github.run_id }}
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v1
+        with:
+          terraform_wrapper: false
+          terraform_version: 1.6.1    
+
+      - name: Define terraform vars
+        working-directory: infra/
+        run: |
+          echo "access_key = \"${{ secrets.AWS_ACCESS_KEY_ID }}\"" >> terraform.tfvars
+          echo "secret_key = \"${{ secrets.AWS_SECRET_ACCESS_KEY }}\"" >> terraform.tfvars
+          echo "session_token = \"${{ secrets.AWS_SESSION_TOKEN }}\"" >> terraform.tfvars
+          echo "user_id = \"${{ secrets.AWS_USER_ID }}\"" >> terraform.tfvars
+          echo "region = \"${{ github.event.inputs.region }}\"" >> terraform.tfvars
+          echo "prefix = \"${{ github.event.inputs.prefix }}\"" >> terraform.tfvars
+          echo "repository_name = \"${{ github.event.inputs.repository_name }}\"" >> terraform.tfvars
+          echo "cluster_name = \"${{ github.event.inputs.cluster_name }}\"" >> terraform.tfvars
+          echo "image_version = \"${{ github.run_id }}\"" >> terraform.tfvars
+
+          - name: Set up AWS credentials
+          uses: aws-actions/configure-aws-credentials@v1
+          with:
+            aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+            aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+            aws-session-token: ${{ secrets.AWS_SESSION_TOKEN }}
+            aws-region: ${{ github.event.inputs.region }}
+  
+      - name: Deploy application to EKS using terraform
+        working-directory: infra/application
+        run: |
+          terraform init
+          terraform apply -auto-approve -var-file=../terraform.tfvars
