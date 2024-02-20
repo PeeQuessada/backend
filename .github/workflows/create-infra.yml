@@ -80,6 +80,7 @@ jobs:
         run: | 
           cat ~/.aws/credentials
           cat terraform.tfvars
+          aws sts get-caller-identity
 
       - name: Terraform plan
         working-directory: infra/
