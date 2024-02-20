@@ -87,4 +87,4 @@ jobs:
       - name: Terraform aaply
         working-directory: infra/
         run: | 
-          terraform destroy -auto-approve -var-file=terraform.tfvars
+          terraform apply -auto-approve -var-file=terraform.tfvars
