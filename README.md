@@ -1,26 +1,24 @@
-First Step
+Branch to create all infrastructure in AWS
 
-    Change Main.tf
-        replace the AccountId (211125361403) with your AccountId
+Configs
+    variable
+        XXXXXXXX
+    secrets
+        XXXXXXXX
 
-HCL - HashiCorp Configuration Language
 
-    initialize
-        terraform init
-    plan
-        terraform plan
-    execute
-        terraform apply
-    finish 
-        terraform destroy
+First Steps using github actions
+    deploy components to AWS
+        XXXXXXXX
+    deploy Image to AWS ERS
+        XXXXXXXX
+    deploy app
+        XXXXXXXX
 
-RUN Kubernets
-
-    update kubectl
-         aws eks --region {{us-east-1}} update-kubeconfig --name {{my-eks-cluster}}
-    run deployment
-        kubectl apply -f ./k8s/deployment.yaml 
-    run service
-        kubectl apply -f ./k8s/service.yaml   
-    get service
-        kubectl get svc   
+First Steps manually
+    deploy components to AWS
+        XXXXXXXX
+    deploy Image to AWS ERS
+        XXXXXXXX
+    deploy app
+        XXXXXXXX
