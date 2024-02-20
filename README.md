@@ -1,6 +1,7 @@
 Branch to create all infrastructure in AWS
 
 Configs
+
     variable
         XXXXXXXX
     secrets
@@ -8,6 +9,7 @@ Configs
 
 
 First Steps using github actions
+
     deploy components to AWS
         XXXXXXXX
     deploy Image to AWS ERS
@@ -16,6 +18,7 @@ First Steps using github actions
         XXXXXXXX
 
 First Steps manually
+
     deploy components to AWS
         XXXXXXXX
     deploy Image to AWS ERS
