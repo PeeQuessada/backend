@@ -1,4 +1,4 @@
-name: Create aws resource using terraform
+name: Deploy application to EKS
 env:
   CI: ""
 on:
