@@ -1,6 +1,10 @@
 data "aws_ecr_image" "application_image" {
   repository_name = var.repository_name
-  image_tag = var.repository_name
+  image_tag = "latest"
+}
+
+output "name" {
+  value = data.aws_ecr_image.application_image
 }
 
 resource "kubernetes_deployment" "Application" {
