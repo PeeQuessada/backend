@@ -33,7 +33,6 @@ variable "session_token" {
 
 variable "role" {
   type = string
-  default = "arn:aws:iam::211125361403:role/LabRole"
 }
 
 variable "profile" {
@@ -43,5 +42,4 @@ variable "profile" {
 
 variable "image" {
   type = string
-  default = "pedroquessada/my-backend:latest"
 }
