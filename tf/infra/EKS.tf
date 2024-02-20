@@ -18,6 +18,4 @@ module "eks" {
       instance_types = ["t2.micro"]
     }
   }
-
-  iam_role_arn = "arn:aws:iam::211125361403:role/LabRole"
 }
