@@ -44,6 +44,15 @@ jobs:
           echo "cluster_name = \"${{ vars.CLUSTER_NAME}}\"" >> terraform.tfvars
           echo "image_version = \"${{ github.run_id }}\"" >> terraform.tfvars
 
+      - name: Create AWS
+        working-directory: terraform/create-aws-infra
+        run: | 
+          mkdir -p ~/.aws
+          echo "[default]" >> ~/.aws/config
+          echo "aws_access_key_id = \"${{ secrets.AWS_ACCESS_KEY_ID }}\"" ~/.aws/config
+          echo "aws_secret_access_key = \"${{ secrets.AWS_SECRET_ACCESS_KEY }}\"" ~/.aws/config
+          echo "aws_session_token = \"${{ secrets.AWS_SESSION_TOKEN }}\"" ~/.aws/config
+
       - name: Create infra using terraform
         working-directory: terraform/create-aws-infra
         run: | 
