@@ -51,6 +51,7 @@ jobs:
           aws configure set aws_access_key_id ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws configure set aws_secret_access_key ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws configure set aws_session_token ${{ secrets.AWS_SESSION_TOKEN }}
+          aws sts get-caller-identity
   
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v1
@@ -80,7 +81,6 @@ jobs:
         run: | 
           cat ~/.aws/credentials
           cat terraform.tfvars
-          aws sts get-caller-identity
 
       - name: Terraform plan
         working-directory: infra/
