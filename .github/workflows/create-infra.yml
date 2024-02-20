@@ -13,7 +13,6 @@ jobs:
       id-token: write
       contents: read
 
-
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -24,7 +23,7 @@ jobs:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-session-token: ${{ secrets.AWS_SESSION_TOKEN }}
-          aws-region: ${{ vars.REGION}}
+          aws-region: ${{ vars.REGION }}
   
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v1
@@ -40,9 +39,9 @@ jobs:
           echo "session_token = \"${{ secrets.AWS_SESSION_TOKEN }}\"" >> terraform.tfvars
           echo "user_id = \"${{ secrets.AWS_USER_ID }}\"" >> terraform.tfvars
           echo "region = \"${{ vars.REGION}}\"" >> terraform.tfvars
-          echo "prefix = \"$PREFIX\"" >> terraform.tfvars
-          echo "repository_name = \"$REPOSITORY_NAME\"" >> terraform.tfvars
-          echo "cluster_name = \"$CLUSTER_NAME\"" >> terraform.tfvars
+          echo "prefix = \"${{ vars.PREFIX}}\"" >> terraform.tfvars
+          echo "${{ vars.REPOSITORY_NAME}} = \"$${{ vars.REPOSITORY_NAME}}\"" >> terraform.tfvars
+          echo "cluster_name = \"${{ vars.CLUSTER_NAME}}\"" >> terraform.tfvars
           echo "image_version = \"${{ github.run_id }}\"" >> terraform.tfvars
 
       - name: Create infra using terraform
@@ -64,8 +63,8 @@ jobs:
         env:
           ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
         run: |
-          docker build -t $ECR_REGISTRY/$REPOSITORY_NAME:${{ github.run_id }} .
-          docker push $ECR_REGISTRY/$REPOSITORY_NAME:${{ github.run_id }}
+          docker build -t $ECR_REGISTRY/${{ vars.REPOSITORY_NAME }}:${{ github.run_id }} .
+          docker push $ECR_REGISTRY/${{ vars.REPOSITORY_NAME }}:${{ github.run_id }}
       
       - name: Set up AWS credentials
         uses: aws-actions/configure-aws-credentials@v1
