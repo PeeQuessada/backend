@@ -13,6 +13,10 @@ resource "kubernetes_deployment" "Application" {
     labels = {
       nome = "${var.prefix}-${var.repository_name}"
     }
+
+    annotations = {
+      "fluxcd.io/automated" = "true"
+    }
   }
 
   spec {
