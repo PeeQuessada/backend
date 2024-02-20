@@ -74,6 +74,34 @@ resource "kubernetes_service" "LoadBalancer" {
   }
 }
 
+# TESTAR
+# resource "kubernetes_horizontal_pod_autoscaler" "hpa" {
+#   metadata {
+#     name = "${var.prefix}-${var.repository_name}"
+#   }
+
+#   spec {
+#     min_replicas = 1
+#     max_replicas = 10
+
+#     scale_target_ref {
+#       kind = "Deployment"
+#       name = "${var.prefix}-${var.repository_name}"
+#     }
+
+#     metric {
+#       type = "Resource"
+
+#       resource {
+#         name   = "cpu"
+#         target {
+#           type = "Utilization"
+#           average_utilization = 70
+#         }
+#       }
+#     }
+#   }
+# }
 
 locals {
   lb_name = kubernetes_service.LoadBalancer.status.0.load_balancer.0.ingress.0.hostname
