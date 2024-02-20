@@ -5,5 +5,7 @@ package-lock.json
 .terraform.tfstate.lock.info
 terraform.tfstate
 terraform.tfstate.backup
-/.terraform
 /env/.terraform
+/.terraform
+/infra/.terraform
+/infra/terraform.tfvars
