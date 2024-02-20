@@ -74,7 +74,7 @@ jobs:
           docker build -t $ECR_REGISTRY/${{ secrets.REPOSITORY_NAME }} .
           docker push $ECR_REGISTRY/${{ secrets.REPOSITORY_NAME }}
 
-      - name: Publish docker image on ERS
+      - name: Publish docker image on ERS2
         shell: bash
         env:
           ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
