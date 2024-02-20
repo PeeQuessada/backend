@@ -82,12 +82,12 @@ jobs:
       
       - name: Build docker image
         run: |
-          docker build -t ${{ secrets.AWS_USER_ID }}.dkr.ecr.${{ github.event.inputs.region }}-aws.amazonaws.com/${{ github.event.inputs.repository_name }} .
+          docker build -t ${{ secrets.AWS_USER_ID }}.dkr.ecr.${{ github.event.inputs.region }}-aws.amazonaws.com/${{ github.event.inputs.repository_name }}:latest .
       
       - name: Publish docker image on ERS
         run: |
           docker images
-          docker push ${{ secrets.AWS_USER_ID }}.dkr.ecr.${{ github.event.inputs.region }}-aws.amazonaws.com/${{ github.event.inputs.repository_name }}
+          docker push ${{ secrets.AWS_USER_ID }}.dkr.ecr.${{ github.event.inputs.region }}-aws.amazonaws.com/${{ github.event.inputs.repository_name }}:latest
       
       - name: Deploy application to EKS using terraform
         working-directory: infra/application
