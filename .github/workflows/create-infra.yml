@@ -76,7 +76,11 @@ jobs:
       #     aws ecr get-login-password --region ${{ github.event.inputs.region }} | docker login --username AWS --password-stdin ${{ secrets.AWS_USER_ID }}.dkr.ecr.${{ github.event.inputs.region }}.amazonaws.com
       - name: Login to Amazon ECR
         id: login-ecr
-        uses: aws-actions/amazon-ecr-login@v2
+        uses: aws-actions/amazon-ecr-login@v1
+        with:
+          registries: ${{ secrets.AWS_USER_ID }}
+          mask-password: "true" # see: https://github.com/aws-actions/amazon-ecr-login#docker-credentials
+
       
       - name: Publish docker image on ERS
         shell: bash
