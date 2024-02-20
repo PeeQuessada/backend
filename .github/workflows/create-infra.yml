@@ -38,9 +38,6 @@ jobs:
           aws-session-token: ${{ secrets.AWS_SESSION_TOKEN }}
           aws-region: ${{ github.event.inputs.region }}
 
-      - name: Login to Amazon ECR
-        uses: aws-actions/amazon-ecr-login@v2
-
       - name: Setup AWS
         run: |
           aws configure set aws_access_key_id ${{ secrets.AWS_ACCESS_KEY_ID }}
@@ -73,7 +70,9 @@ jobs:
       #   working-directory: infra/
       #   run: | 
       #     terraform apply -auto-approve -var-file=terraform.tfvars
-      
+      - name: Login to Amazon ECR
+        uses: aws-actions/amazon-ecr-login@v2
+        
       - name: Build docker image
         run: |
           docker build -t ${{ secrets.AWS_USER_ID }}.dkr.ecr.${{ github.event.inputs.region }}-aws.amazonaws.com/${{ github.event.inputs.repository_name }}:latest .
