@@ -48,11 +48,6 @@ jobs:
         with:
           terraform_wrapper: false
           terraform_version: 1.6.1    
-
-      - name: Terraform init
-        working-directory: terraform/
-        run: | 
-          terraform init
       
       - name: Define terraform vars
         working-directory: terraform/
@@ -68,9 +63,10 @@ jobs:
           echo "image_version = \"${{ github.run_id }}\"" >> terraform.tfvars
 
       - name: Create infra using terraform
-        working-directory: terraform/
+        working-directory: terraform/create-aws-infra
         run: | 
-          terraform apply -auto-approve -var-file=terraform.tfvars
+          terraform init
+          terraform apply -auto-approve -var-file=../terraform.tfvars
 
       - name: Login to Amazon ECR
         id: login-ecr
@@ -80,7 +76,7 @@ jobs:
           mask-password: "true" # see: https://github.com/aws-actions/amazon-ecr-login#docker-credentials
 
       - name: Publish docker image on ERS
-        working-directory: app
+        working-directory: app/
         shell: bash
         env:
           ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
@@ -97,7 +93,7 @@ jobs:
           aws-region: ${{ github.event.inputs.region }}
 
       - name: Deploy application to EKS using terraform
-        working-directory: terraform/application
+        working-directory: terraform/deploy-k8s
         run: |
           terraform init
           terraform apply -auto-approve -var-file=../terraform.tfvars
