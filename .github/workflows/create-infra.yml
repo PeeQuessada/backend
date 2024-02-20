@@ -71,9 +71,6 @@ jobs:
       #   run: | 
       #     terraform apply -auto-approve -var-file=terraform.tfvars
 
-      # - name: AWS ECR
-      #   run: |
-      #     aws ecr get-login-password --region ${{ github.event.inputs.region }} | docker login --username AWS --password-stdin ${{ secrets.AWS_USER_ID }}.dkr.ecr.${{ github.event.inputs.region }}.amazonaws.com
       - name: Login to Amazon ECR
         id: login-ecr
         uses: aws-actions/amazon-ecr-login@v1
@@ -81,7 +78,6 @@ jobs:
           registries: ${{ secrets.AWS_USER_ID }}
           mask-password: "true" # see: https://github.com/aws-actions/amazon-ecr-login#docker-credentials
 
-      
       - name: Publish docker image on ERS
         shell: bash
         env:
@@ -90,6 +86,14 @@ jobs:
           docker build -t $ECR_REGISTRY/${{ github.event.inputs.repository_name }} .
           docker push $ECR_REGISTRY/${{ github.event.inputs.repository_name }}
       
+      - name: Set up AWS credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-session-token: ${{ secrets.AWS_SESSION_TOKEN }}
+          aws-region: ${{ github.event.inputs.region }}
+          
       - name: Deploy application to EKS using terraform
         working-directory: infra/application
         run: |
