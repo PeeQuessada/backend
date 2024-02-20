@@ -75,18 +75,19 @@ jobs:
           echo "repository_name = \"${{ github.event.inputs.repository_name }}\"" >> terraform.tfvars
           echo "cluster_name = \"${{ github.event.inputs.cluster_name }}\"" >> terraform.tfvars
 
-      - name: Create infra using terraform
-        working-directory: infra/
-        run: | 
-          terraform apply -auto-approve -var-file=terraform.tfvars
+      # - name: Create infra using terraform
+      #   working-directory: infra/
+      #   run: | 
+      #     terraform apply -auto-approve -var-file=terraform.tfvars
       
       - name: Build docker image
         run: |
-          docker build -t ${{ secrets.AWS_USER_ID }}.dkr.ecr.${{ github.event.inputs.region }}-aws.amazonaws.com/${{ github.event.inputs.repository_name }}:${{ github.event.inputs.repository_name }} .
+          docker build -t ${{ secrets.AWS_USER_ID }}.dkr.ecr.${{ github.event.inputs.region }}-aws.amazonaws.com/${{ github.event.inputs.repository_name }} .
       
       - name: Publish docker image on ERS
         run: |
-          docker push ${{ secrets.AWS_USER_ID }}.dkr.ecr.${{ github.event.inputs.region }}-aws.amazonaws.com/${{ github.event.inputs.repository_name }}:${{ github.event.inputs.repository_name }}
+          docker images
+          docker push ${{ secrets.AWS_USER_ID }}.dkr.ecr.${{ github.event.inputs.region }}-aws.amazonaws.com/${{ github.event.inputs.repository_name }}
       
       - name: Deploy application to EKS using terraform
         working-directory: infra/application
