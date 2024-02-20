@@ -5,23 +5,6 @@ on:
   # push:
   #   branches: ["master"]
   workflow_dispatch:
-    inputs:
-      region:
-        description: ''
-        required: true
-        default: 'us-east-1'
-      prefix:
-          description: ''
-          required: true
-          default: 'backend'
-      repository_name:
-        description: ''
-        required: true
-        default: 'backend'
-      cluster_name:
-          description: ''
-          required: true
-          default: 'backend'
 
 jobs:
   apply:
@@ -43,21 +26,6 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-session-token: ${{ secrets.AWS_SESSION_TOKEN }}
           aws-region: ${{ secrets.REGION }}
-  
-      # - name: Setup Terraform
-      #   uses: hashicorp/setup-terraform@v1
-      #   with:
-      #     terraform_wrapper: false
-      #     terraform_version: 1.6.1    
-      
-      # - name: Define terraform vars
-      #   working-directory: infra/application
-      #   run: |
-      #     echo "access_key = \"${{ secrets.AWS_ACCESS_KEY_ID }}\"" >> terraform.tfvars
-      #     echo "secret_key = \"${{ secrets.AWS_SECRET_ACCESS_KEY }}\"" >> terraform.tfvars
-      #     echo "session_token = \"${{ secrets.AWS_SESSION_TOKEN }}\"" >> terraform.tfvars
-      #     echo "prefix = \"${{ secrets.PREFIX }}\"" >> terraform.tfvars
-      #     echo "repository_name = \"${{ secrets.REPOSITORY_NAME }}\"" >> terraform.tfvars
 
       - name: Login to Amazon ECR
         id: login-ecr
@@ -65,25 +33,11 @@ jobs:
         with:
           registries: ${{ secrets.AWS_USER_ID }}
           mask-password: "true" # see: https://github.com/aws-actions/amazon-ecr-login#docker-credentials
-      
-      # - name: Publish docker image on ERS
-      #   shell: bash
-      #   env:
-      #     ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-      #   run: |
-      #     docker build -t $ECR_REGISTRY/${{ secrets.REPOSITORY_NAME }} .
-      #     docker push $ECR_REGISTRY/${{ secrets.REPOSITORY_NAME }}
 
       - name: Publish docker image on ERS2
         shell: bash
         env:
           ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
         run: |
-          docker build -t 211125361403.dkr.ecr.us-east-1.amazonaws.com/backend .
-          docker push 211125361403.dkr.ecr.us-east-1.amazonaws.com/backend
-      
-      # - name: Deploy application to EKS using terraform
-      #   working-directory: infra/application
-      #   run: |
-      #     terraform init
-      #     terraform apply -auto-approve -var-file=../terraform.tfvars
+          docker build -t ${{ secrets.AWS_USER_ID }}.dkr.ecr.${{ secrets.REGION }}.amazonaws.com/${{ secrets.REPOSITORY_NAME }} .
+          docker push ${{ secrets.AWS_USER_ID }}.dkr.ecr.${{ secrets.REGION }}.amazonaws.com/${{ secrets.REPOSITORY_NAME }}
