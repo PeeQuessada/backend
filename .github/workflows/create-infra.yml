@@ -65,6 +65,7 @@ jobs:
           echo "prefix = \"${{ github.event.inputs.prefix }}\"" >> terraform.tfvars
           echo "repository_name = \"${{ github.event.inputs.repository_name }}\"" >> terraform.tfvars
           echo "cluster_name = \"${{ github.event.inputs.cluster_name }}\"" >> terraform.tfvars
+          echo "image_version = \"${{ github.run_id }}\"" >> terraform.tfvars
 
       - name: Create infra using terraform
         working-directory: infra/
@@ -83,8 +84,8 @@ jobs:
         env:
           ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
         run: |
-          docker build -t $ECR_REGISTRY/${{ github.event.inputs.repository_name }} .
-          docker push $ECR_REGISTRY/${{ github.event.inputs.repository_name }}
+          docker build -t $ECR_REGISTRY/${{ github.event.inputs.repository_name }}:${{ github.run_id }} .
+          docker push $ECR_REGISTRY/${{ github.event.inputs.repository_name }}:${{ github.run_id }}
       
       - name: Set up AWS credentials
         uses: aws-actions/configure-aws-credentials@v1

@@ -1,6 +1,6 @@
 data "aws_ecr_image" "application_image" {
   repository_name = var.repository_name
-  image_tag = "latest"
+  image_tag = var.image_version
 }
 
 output "name" {
@@ -14,13 +14,18 @@ resource "kubernetes_deployment" "Application" {
       nome = "${var.prefix}-${var.repository_name}"
     }
 
-    annotations = {
-      "fluxcd.io/automated" = "true"
-    }
   }
 
   spec {
     replicas = 2
+
+    strategy {
+      type = "RollingUpdate"
+      rolling_update {
+        max_surge       = 1
+        max_unavailable = 1
+      }
+    }
 
     selector {
       match_labels = {
