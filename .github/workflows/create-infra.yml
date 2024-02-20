@@ -24,7 +24,7 @@ jobs:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-session-token: ${{ secrets.AWS_SESSION_TOKEN }}
-          aws-region: $REGION
+          aws-region: ${{ vars.REGION}}
   
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v1
@@ -39,7 +39,7 @@ jobs:
           echo "secret_key = \"${{ secrets.AWS_SECRET_ACCESS_KEY }}\"" >> terraform.tfvars
           echo "session_token = \"${{ secrets.AWS_SESSION_TOKEN }}\"" >> terraform.tfvars
           echo "user_id = \"${{ secrets.AWS_USER_ID }}\"" >> terraform.tfvars
-          echo "region = \"$REGION\"" >> terraform.tfvars
+          echo "region = \"${{ vars.REGION}}\"" >> terraform.tfvars
           echo "prefix = \"$PREFIX\"" >> terraform.tfvars
           echo "repository_name = \"$REPOSITORY_NAME\"" >> terraform.tfvars
           echo "cluster_name = \"$CLUSTER_NAME\"" >> terraform.tfvars
@@ -73,7 +73,7 @@ jobs:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-session-token: ${{ secrets.AWS_SESSION_TOKEN }}
-          aws-region: $REGION
+          aws-region: ${{ vars.REGION}}
 
       - name: Deploy application to EKS using terraform
         working-directory: terraform/deploy-k8s
