@@ -26,6 +26,11 @@ jobs:
     name: 'terraform apply'
     runs-on: ubuntu-20.04
 
+    permissions:
+      id-token: write
+      contents: read
+
+
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -37,22 +42,17 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-session-token: ${{ secrets.AWS_SESSION_TOKEN }}
           aws-region: ${{ github.event.inputs.region }}
-
-      # - name: Setup AWS
-      #   run: |
-      #     aws configure set aws_access_key_id ${{ secrets.AWS_ACCESS_KEY_ID }}
-      #     aws configure set aws_secret_access_key ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-      #     aws configure set aws_session_token ${{ secrets.AWS_SESSION_TOKEN }}
   
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v1
         with:
+          terraform_wrapper: false
           terraform_version: 1.6.1    
 
-      # - name: Terraform init
-      #   working-directory: infra/
-      #   run: | 
-      #     terraform init
+      - name: Terraform init
+        working-directory: infra/
+        run: | 
+          terraform init
       
       - name: Define terraform vars
         working-directory: infra/
@@ -70,17 +70,21 @@ jobs:
       #   working-directory: infra/
       #   run: | 
       #     terraform apply -auto-approve -var-file=terraform.tfvars
-      - name: Login to Amazon ECR
-        uses: aws-actions/amazon-ecr-login@v2
 
-      - name: Build docker image
-        run: |
-          docker build -t ${{ secrets.AWS_USER_ID }}.dkr.ecr.${{ github.event.inputs.region }}-aws.amazonaws.com/${{ github.event.inputs.repository_name }}:latest .
-          aws ecr get-login-password --region ${{ github.event.inputs.region }} | docker login --username AWS --password-stdin ${{ secrets.AWS_USER_ID }}.dkr.ecr.${{ github.event.inputs.region }}.amazonaws.com
+      # - name: AWS ECR
+      #   run: |
+      #     aws ecr get-login-password --region ${{ github.event.inputs.region }} | docker login --username AWS --password-stdin ${{ secrets.AWS_USER_ID }}.dkr.ecr.${{ github.event.inputs.region }}.amazonaws.com
+      - name: Login to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v2
       
       - name: Publish docker image on ERS
+        shell: bash
+        env:
+          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
         run: |
-          docker push ${{ secrets.AWS_USER_ID }}.dkr.ecr.${{ github.event.inputs.region }}-aws.amazonaws.com/${{ github.event.inputs.repository_name }}:latest
+          docker build -t ECR_REGISTRY/${{ github.event.inputs.repository_name }} .
+          docker push ECR_REGISTRY/${{ github.event.inputs.repository_name }}
       
       - name: Deploy application to EKS using terraform
         working-directory: infra/application
