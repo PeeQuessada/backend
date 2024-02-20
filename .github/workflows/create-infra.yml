@@ -56,6 +56,7 @@ jobs:
       
       - name: Update terraform.tfvars
         run: |
+          cd infra/
           echo "region = \"${{ github.event.inputs.region }}\"" >> terraform.tfvars
           echo "prefix = \"${{ github.event.inputs.prefix }}\"" >> terraform.tfvars
           echo "repository_name = \"${{ github.event.inputs.repository_name }}\"" >> terraform.tfvars
@@ -74,4 +75,4 @@ jobs:
 
       - name: Terraform plan
         run: | 
-          terraform plan -var-file=terraform.tfvars --auto-approve
+          terraform plan -var-file=terraform.tfvars
