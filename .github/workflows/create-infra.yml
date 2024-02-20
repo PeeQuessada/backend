@@ -86,6 +86,7 @@ jobs:
       
       - name: Publish docker image on ERS
         run: |
+          aws ecr get-login-password --region ${{ github.event.inputs.region }} | docker login --username AWS --password-stdin ${{ secrets.AWS_USER_ID }}.dkr.ecr.${{ github.event.inputs.region }}.amazonaws.com
           docker images
           docker push ${{ secrets.AWS_USER_ID }}.dkr.ecr.${{ github.event.inputs.region }}-aws.amazonaws.com/${{ github.event.inputs.repository_name }}:latest
       
