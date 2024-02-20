@@ -59,6 +59,9 @@ jobs:
       - name: Update terraform.tfvars
         working-directory: infra/
         run: |
+          echo "access_key = \"${{ secrets.AWS_ACCESS_KEY_ID }}\"" >> terraform.tfvars
+          echo "secret_key = \"${{ secrets.AWS_SECRET_ACCESS_KEY }}\"" >> terraform.tfvars
+          echo "session_token = \"${{ secrets.AWS_SESSION_TOKEN }}\"" >> terraform.tfvars
           echo "region = \"${{ github.event.inputs.region }}\"" >> terraform.tfvars
           echo "prefix = \"${{ github.event.inputs.prefix }}\"" >> terraform.tfvars
           echo "repository_name = \"${{ github.event.inputs.repository_name }}\"" >> terraform.tfvars
