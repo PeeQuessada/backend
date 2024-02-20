@@ -59,8 +59,19 @@ jobs:
         uses: hashicorp/setup-terraform@v1
         with:
           terraform_version: 1.6.1    
+
+      - name: Debug
+        working-directory: infra/
+        run: | 
+          cat ~/.aws/credentials
+          cat terraform.tfvars
+
+      - name: Terraform init
+        working-directory: infra/
+        run: | 
+          terraform init
       
-      - name: Update terraform.tfvars
+      - name: Define terraform vars
         working-directory: infra/
         run: |
           echo "access_key = \"${{ secrets.AWS_ACCESS_KEY_ID }}\"" >> terraform.tfvars
@@ -73,18 +84,7 @@ jobs:
           echo "image = \"${{ github.event.inputs.image }}\"" >> terraform.tfvars
           echo "role = \"${{ github.event.inputs.role }}\"" >> terraform.tfvars
 
-      - name: Terraform init
+      - name: Terraform aaply
         working-directory: infra/
         run: | 
-          terraform init
-
-      - name: Debug
-        working-directory: infra/
-        run: | 
-          cat ~/.aws/credentials
-          cat terraform.tfvars
-
-      - name: Terraform plan
-        working-directory: infra/
-        run: | 
-          terraform apply -auto-approve -var-file=terraform.tfvars
+          terraform destroy -auto-approve -var-file=terraform.tfvars
