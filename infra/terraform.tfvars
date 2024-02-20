@@ -1,0 +1,9 @@
+region = "us-east-1"
+prefix = "local"
+repository_name = "local"
+cluster_name = "local"
+
+user_id = "211125361403"
+access_key="ASIATCKANLL5W7UYCKOA"
+secret_key="8pXH+hjUKkju9F6fuUIo3Yr73TwqYIXu6Y9AZh8h"
+session_token="FwoGZXIvYXdzEEwaDPTR4h+P0m7L/iSApCLQARjd+w9GnOsiMzHCh9ts//PajlAtiKXr3eydL359ytkIl8Lv2SUBF3nqcNJTyjeq0d9XqQgfi3NAA0pP1yhpsM9k/iQybkMO8jGPVhOoY2cvbBwDtr0Zvv8nGegLWzeNAa63vYMjNJoNPWsN0quNIIkiZg6/+i2/Ngqkjqop82DWfaLFttK00yfSPnWC69v5N5Sf9q5zxWcnP2wGwInwBz5NMPSJfTRq3iy2mFo3RisltuoLCLdBjEI7dK6qxIEyJFEJ2tWm/wncSFFY6DQxYLwo6JTQrgYyLbmV2LqUeQw54c9faM/mF84fVwT46pf73gHUdEaIdmCvawVS1sAO0NcKckwOFQ=="

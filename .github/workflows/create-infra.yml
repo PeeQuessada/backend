@@ -20,14 +20,6 @@ on:
           description: ''
           required: true
           default: 'backend'
-      image:
-        description: ''
-        required: true
-        default: 'pedroquessada/my-backend:latest'
-      role:
-          description: ''
-          required: true
-          default: 'arn:aws:iam::211125361403:role/LabRole'
 
 jobs:
   apply:
@@ -44,7 +36,7 @@ jobs:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-session-token: ${{ secrets.AWS_SESSION_TOKEN }}
-          aws-region: us-east-1
+          aws-region: ${{ github.event.inputs.region }}
 
       - name: Login to Amazon ECR
         uses: aws-actions/amazon-ecr-login@v2
@@ -77,14 +69,27 @@ jobs:
           echo "access_key = \"${{ secrets.AWS_ACCESS_KEY_ID }}\"" >> terraform.tfvars
           echo "secret_key = \"${{ secrets.AWS_SECRET_ACCESS_KEY }}\"" >> terraform.tfvars
           echo "session_token = \"${{ secrets.AWS_SESSION_TOKEN }}\"" >> terraform.tfvars
+          echo "user_id = \"${{ secrets.AWS_USER_ID }}\"" >> terraform.tfvars
           echo "region = \"${{ github.event.inputs.region }}\"" >> terraform.tfvars
           echo "prefix = \"${{ github.event.inputs.prefix }}\"" >> terraform.tfvars
           echo "repository_name = \"${{ github.event.inputs.repository_name }}\"" >> terraform.tfvars
           echo "cluster_name = \"${{ github.event.inputs.cluster_name }}\"" >> terraform.tfvars
-          echo "image = \"${{ github.event.inputs.image }}\"" >> terraform.tfvars
-          echo "role = \"${{ github.event.inputs.role }}\"" >> terraform.tfvars
 
-      - name: Terraform aaply
+      - name: Create infra using terraform
         working-directory: infra/
         run: | 
           terraform apply -auto-approve -var-file=terraform.tfvars
+      
+      - name: Build docker image
+        run: |
+          docker build -t ${{ secrets.AWS_USER_ID }}.dkr.ecr.${{ github.event.inputs.region }}-aws.amazonaws.com/${{ github.event.inputs.repository_name }}:${{ github.event.inputs.repository_name }} .
+      
+      - name: Publish docker image on ERS
+        run: |
+          docker push ${{ secrets.AWS_USER_ID }}.dkr.ecr.${{ github.event.inputs.region }}-aws.amazonaws.com/${{ github.event.inputs.repository_name }}:${{ github.event.inputs.repository_name }}
+      
+      - name: Deploy application to EKS using terraform
+        working-directory: infra/application
+        run: |
+          terraform init
+          terraform apply -auto-approve -var-file=../terraform.tfvars

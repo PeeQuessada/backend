@@ -1,3 +1,8 @@
+data "aws_ecr_image" "application_image" {
+  repository_name = var.repository_name
+  image_tag = var.repository_name
+}
+
 resource "kubernetes_deployment" "Application" {
   metadata {
     name = "${var.prefix}-${var.repository_name}"
@@ -24,7 +29,7 @@ resource "kubernetes_deployment" "Application" {
 
       spec {
         container {
-          image = var.image
+          image = data.aws_ecr_image.application_image.image_uri
           name  = "${var.prefix}-${var.repository_name}"
 
           resources {
