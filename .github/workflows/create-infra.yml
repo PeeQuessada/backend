@@ -38,21 +38,21 @@ jobs:
           aws-session-token: ${{ secrets.AWS_SESSION_TOKEN }}
           aws-region: ${{ github.event.inputs.region }}
 
-      - name: Setup AWS
-        run: |
-          aws configure set aws_access_key_id ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws configure set aws_secret_access_key ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws configure set aws_session_token ${{ secrets.AWS_SESSION_TOKEN }}
+      # - name: Setup AWS
+      #   run: |
+      #     aws configure set aws_access_key_id ${{ secrets.AWS_ACCESS_KEY_ID }}
+      #     aws configure set aws_secret_access_key ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      #     aws configure set aws_session_token ${{ secrets.AWS_SESSION_TOKEN }}
   
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v1
         with:
           terraform_version: 1.6.1    
 
-      - name: Terraform init
-        working-directory: infra/
-        run: | 
-          terraform init
+      # - name: Terraform init
+      #   working-directory: infra/
+      #   run: | 
+      #     terraform init
       
       - name: Define terraform vars
         working-directory: infra/
@@ -72,7 +72,7 @@ jobs:
       #     terraform apply -auto-approve -var-file=terraform.tfvars
       - name: Login to Amazon ECR
         uses: aws-actions/amazon-ecr-login@v2
-        
+
       - name: Build docker image
         run: |
           docker build -t ${{ secrets.AWS_USER_ID }}.dkr.ecr.${{ github.event.inputs.region }}-aws.amazonaws.com/${{ github.event.inputs.repository_name }}:latest .
