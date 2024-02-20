@@ -1,5 +1,6 @@
 name: Create aws resource using terraform
-
+env:
+  CI: ""
 on:
   workflow_dispatch:
     inputs:
