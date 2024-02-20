@@ -78,7 +78,7 @@ jobs:
       - name: Debug
         working-directory: infra/
         run: | 
-          ls -l
+          nano ~/.aws/credentials
           cat terraform.tfvars
 
       - name: Terraform plan
