@@ -50,7 +50,7 @@ jobs:
           terraform_version: 1.6.1    
 
       - name: Define terraform vars
-        working-directory: deploy-k8s/
+        working-directory: terraform/
         run: |
           echo "access_key = \"${{ secrets.AWS_ACCESS_KEY_ID }}\"" >> terraform.tfvars
           echo "secret_key = \"${{ secrets.AWS_SECRET_ACCESS_KEY }}\"" >> terraform.tfvars
@@ -63,7 +63,7 @@ jobs:
           echo "image_version = \"${{ github.run_id }}\"" >> terraform.tfvars
   
       - name: Create AWS
-        working-directory: deploy-k8s/
+        working-directory: terraform/deploy-k8s
         run: | 
           mkdir -p ~/.aws
           echo "[default]" >> ~/.aws/config
@@ -72,7 +72,7 @@ jobs:
           echo "aws_session_token = \"${{ secrets.AWS_SESSION_TOKEN }}\"" >> ~/.aws/config
 
       - name: Deploy application to EKS using terraform
-        working-directory: deploy-k8s/
+        working-directory: terraform/deploy-k8s
         run: |
           terraform init
-          terraform apply -auto-approve -var-file=terraform.tfvars
+          terraform apply -auto-approve -var-file=../terraform.tfvars
