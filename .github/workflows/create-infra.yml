@@ -53,13 +53,13 @@ jobs:
           echo "aws_secret_access_key = \"${{ secrets.AWS_SECRET_ACCESS_KEY }}\"" >> ~/.aws/config
           echo "aws_session_token = \"${{ secrets.AWS_SESSION_TOKEN }}\"" >> ~/.aws/config
 
-      - name: Create infra using terraform
-        working-directory: terraform/create-aws-infra
-        run: | 
-          cat ~/.aws/config
-          export AWS_PROFILE=default
-          terraform init
-          terraform apply -auto-approve -var-file=../terraform.tfvars
+      # - name: Create infra using terraform
+      #   working-directory: terraform/create-aws-infra
+      #   run: | 
+      #     cat ~/.aws/config
+      #     export AWS_PROFILE=default
+      #     terraform init
+      #     terraform apply -auto-approve -var-file=../terraform.tfvars
 
       - name: Login to Amazon ECR
         id: login-ecr
