@@ -42,7 +42,7 @@ resource "kubernetes_deployment" "Application" {
 
       spec {
         container {
-          image = data.aws_ecr_image.application_image.image_uri
+          image = "${data.aws_ecr_image.application_image.image_uri}:7983645533"
           name  = "${var.prefix}-${var.repository_name}"
 
           resources {
@@ -71,21 +71,21 @@ resource "kubernetes_deployment" "Application" {
   }
 }
 
-# resource "kubernetes_service" "LoadBalancer" {
-#   metadata {
-#     name = "${var.prefix}-${var.repository_name}"
-#   }
-#   spec {
-#     selector = {
-#       nome = "${var.prefix}-${var.repository_name}"
-#     }
-#     port {
-#       port        = 3000
-#       target_port = 3000
-#     }
-#     type = "LoadBalancer"
-#   }
-#}
+resource "kubernetes_service" "LoadBalancer" {
+  metadata {
+    name = "${var.prefix}-${var.repository_name}"
+  }
+  spec {
+    selector = {
+      nome = "${var.prefix}-${var.repository_name}"
+    }
+    port {
+      port        = 3000
+      target_port = 3000
+    }
+    type = "LoadBalancer"
+  }
+}
 
 # TESTAR
 # resource "kubernetes_horizontal_pod_autoscaler" "hpa" {
