@@ -62,7 +62,7 @@ jobs:
           echo "cluster_name = \"${{ vars.CLUSTER_NAME}}\"" >> terraform.tfvars
           echo "image_version = \"${{ github.run_id }}\"" >> terraform.tfvars
   
-      - name: Create AWS
+      - name: Create AWS config
         working-directory: terraform/deploy-k8s
         run: | 
           mkdir -p ~/.aws
@@ -71,11 +71,16 @@ jobs:
           echo "aws_secret_access_key = \"${{ secrets.AWS_SECRET_ACCESS_KEY }}\"" >> ~/.aws/config
           echo "aws_session_token = \"${{ secrets.AWS_SESSION_TOKEN }}\"" >> ~/.aws/config
 
+      - name: Config K8s to sync with EKS
+        working-directory: terraform/deploy-k8s
+        run: |
+          aws eks --region ${{ vars.CLUSTER_NAME}} update-kubeconfig --name ${{ vars.PREFIX}}-${{ vars.REPOSITORY_NAME}}-${{ vars.CLUSTER_NAME}}
+          export KUBECONFIG=~/.kube/config
+
       - name: Deploy application to EKS using terraform
         working-directory: terraform/deploy-k8s
         run: |
-          kubectl get svc
           aws eks --region ${{ vars.CLUSTER_NAME}} update-kubeconfig --name ${{ vars.PREFIX}}-${{ vars.REPOSITORY_NAME}}-${{ vars.CLUSTER_NAME}}
-          kubectl get svc
+          export KUBECONFIG=~/.kube/config
           terraform init
           terraform apply -auto-approve -var-file=../terraform.tfvars
