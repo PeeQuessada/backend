@@ -56,7 +56,7 @@ jobs:
           echo "secret_key = \"${{ secrets.AWS_SECRET_ACCESS_KEY }}\"" >> terraform.tfvars
           echo "session_token = \"${{ secrets.AWS_SESSION_TOKEN }}\"" >> terraform.tfvars
           echo "user_id = \"${{ secrets.AWS_USER_ID }}\"" >> terraform.tfvars
-          echo "region = \"${{ vars.REGION}}\"" >> terraform.tfvars
+          echo "region = \"${{ vars.CLUSTER_NAME}}\"" >> terraform.tfvars
           echo "prefix = \"${{ vars.PREFIX}}\"" >> terraform.tfvars
           echo "repository_name = \"${{ vars.REPOSITORY_NAME}}\"" >> terraform.tfvars
           echo "cluster_name = \"${{ vars.CLUSTER_NAME}}\"" >> terraform.tfvars
@@ -74,6 +74,7 @@ jobs:
       - name: Deploy application to EKS using terraform
         working-directory: terraform/deploy-k8s
         run: |
-          aws eks --region us-east-1 update-kubeconfig --name actions-cluster2-app
+          aws eks --region ${{ vars.CLUSTER_NAME}} update-kubeconfig --name ${{ vars.PREFIX}}-${{ vars.REPOSITORY_NAME}}-"${{ vars.CLUSTER_NAME}}
+          kubectl get svc
           terraform init
           terraform apply -auto-approve -var-file=../terraform.tfvars
