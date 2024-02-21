@@ -1,7 +1,7 @@
 # Project Description
 
 <details>
-<summary>*Leia isto em [Português (Brasileiro)](README_ptbr.md)*</summary>
+<summary>Leia isto em [Português (Brasileiro)](README_ptbr.md)</summary>
 </details>
 
 This repository contains the necessary artifacts to run and manage the application using Docker, GitHub Actions, and Terraform. Follow the instructions below to set up and run the environment properly.
