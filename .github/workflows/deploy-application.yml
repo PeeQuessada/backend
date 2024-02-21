@@ -74,5 +74,6 @@ jobs:
       - name: Deploy application to EKS using terraform
         working-directory: terraform/deploy-k8s
         run: |
+          aws eks --region us-east-1 update-kubeconfig --name actions-cluster2-app
           terraform init
           terraform apply -auto-approve -var-file=../terraform.tfvars
