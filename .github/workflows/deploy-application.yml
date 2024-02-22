@@ -80,7 +80,5 @@ jobs:
       - name: Deploy application to EKS using terraform
         working-directory: terraform/cicd-app
         run: |
-          aws eks --region ${{ vars.CLUSTER_NAME}} update-kubeconfig --name ${{ vars.PREFIX}}-${{ vars.REPOSITORY_NAME}}-${{ vars.CLUSTER_NAME}}
-          export KUBECONFIG=~/.kube/config
           terraform init
           terraform apply -auto-approve -var-file=../terraform.tfvars
