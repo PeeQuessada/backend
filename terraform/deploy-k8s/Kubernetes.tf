@@ -34,17 +34,17 @@ resource "kubernetes_deployment" "Application" {
 
       spec {
         container {
-          image = "${data.aws_ecr_image.application_image.image_uri}:${var.image_version}"
+          image = "${data.aws_ecr_image.application_image.image_uri}"
           name  = "${var.prefix}-${var.repository_name}"
 
           resources {
             limits = {
-              cpu    = "0.5"
-              memory = "512Mi"
+              cpu    = "250m"
+              memory = "256Mi"
             }
             requests = {
               cpu    = "250m"
-              memory = "50Mi"
+              memory = "128Mi"
             }
           }
 
