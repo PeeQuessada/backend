@@ -56,7 +56,7 @@ jobs:
           echo "secret_key = \"${{ secrets.AWS_SECRET_ACCESS_KEY }}\"" >> terraform.tfvars
           echo "session_token = \"${{ secrets.AWS_SESSION_TOKEN }}\"" >> terraform.tfvars
           echo "user_id = \"${{ secrets.AWS_USER_ID }}\"" >> terraform.tfvars
-          echo "region = \"${{ vars.CLUSTER_NAME}}\"" >> terraform.tfvars
+          echo "region = \"${{ vars.REGION}}\"" >> terraform.tfvars
           echo "prefix = \"${{ vars.PREFIX}}\"" >> terraform.tfvars
           echo "repository_name = \"${{ vars.REPOSITORY_NAME}}\"" >> terraform.tfvars
           echo "cluster_name = \"${{ vars.CLUSTER_NAME}}\"" >> terraform.tfvars
