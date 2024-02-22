@@ -32,7 +32,7 @@ jobs:
 
       - name: Commit terraform state file
         run: |
-          git add terraform/terraform.tfvars
+          git add -f terraform/terraform.tfvars
           git commit -m "Automatic commit-Push tf state"
           git remote set-url --push origin https://PeeQuessada:${{ secrets.GITHUB_TOKEN }}N@github.com/backend
 

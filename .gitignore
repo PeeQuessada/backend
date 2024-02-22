@@ -8,5 +8,5 @@ terraform.tfstate.backup
 /.terraform
 /terraform/.terraform
 /terraform/terraform.tfvars
-/terraform/application/.terraform
-/terraform/application/terraform.tfvars
+/terraform/create-aws-infra/.terraform
+/terraform/create-aws-infra/terraform.tfvars
