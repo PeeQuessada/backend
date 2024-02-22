@@ -19,13 +19,13 @@ resource "kubernetes_deployment" "Application" {
   spec {
     replicas = 2
 
-    strategy {
-      type = "RollingUpdate"
-      rolling_update {
-        max_surge       = 1
-        max_unavailable = 1
-      }
-    }
+    # strategy {
+    #   type = "RollingUpdate"
+    #   rolling_update {
+    #     max_surge       = 1
+    #     max_unavailable = 1
+    #   }
+    # }
 
     selector {
       match_labels = {
