@@ -71,8 +71,16 @@ jobs:
           echo "aws_secret_access_key = \"${{ secrets.AWS_SECRET_ACCESS_KEY }}\"" >> ~/.aws/config
           echo "aws_session_token = \"${{ secrets.AWS_SESSION_TOKEN }}\"" >> ~/.aws/config
 
+      - name: Config K8s to sync with EKS
+        working-directory: terraform/cicd-app
+        run: |
+          aws eks --region ${{ vars.CLUSTER_NAME}} update-kubeconfig --name ${{ vars.PREFIX}}-${{ vars.REPOSITORY_NAME}}-${{ vars.CLUSTER_NAME}}
+          export KUBECONFIG=~/.kube/config
+
       - name: Deploy application to EKS using terraform
         working-directory: terraform/cicd-app
         run: |
+          aws eks --region ${{ vars.CLUSTER_NAME}} update-kubeconfig --name ${{ vars.PREFIX}}-${{ vars.REPOSITORY_NAME}}-${{ vars.CLUSTER_NAME}}
+          export KUBECONFIG=~/.kube/config
           terraform init
           terraform apply -auto-approve -var-file=../terraform.tfvars
