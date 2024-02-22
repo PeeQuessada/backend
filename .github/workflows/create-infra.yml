@@ -68,8 +68,8 @@ jobs:
           cat ../terraform.tfvars
           terraform init
           terraform apply -auto-approve -var-file=../terraform.tfvars   
-          ls 
-          cat terraform.tfstate   
+          export S3_URI=$(terraform output -raw s3_bucket_uri)
+          aws s3 cp terraform.tfstate s3://$S3_URI 
 
       - name: Login to Amazon ECR
         id: login-ecr
@@ -96,9 +96,8 @@ jobs:
       - name: Deploy application to EKS using terraform
         working-directory: terraform/create-aws-infra/
         run: |
+          aws s3 cp s3://$S3_URI terraform.tfstate
           terraform init
           terraform apply -auto-approve -var-file=../terraform.tfvars
-          cat terraform.tfstate
           export S3_URI=$(terraform output -raw s3_bucket_uri)
-          echo "URI do S3: $S3_URI"
           aws s3 cp terraform.tfstate s3://$S3_URI
