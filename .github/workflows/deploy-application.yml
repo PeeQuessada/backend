@@ -2,8 +2,8 @@ name: Deploy application to EKS
 env:
   CI: ""
 on:
-  push:
-    branches: ["main", "master"]
+  # push:
+  #   branches: ["main", "master"]
   workflow_dispatch:
 
 jobs:
@@ -82,7 +82,7 @@ jobs:
         run: |
           aws eks --region ${{ vars.CLUSTER_NAME}} update-kubeconfig --name ${{ vars.PREFIX}}-${{ vars.REPOSITORY_NAME}}-${{ vars.CLUSTER_NAME}}
           export KUBECONFIG=~/.kube/config
-          aws s3 cp s3://${{ var.BUCKET }}/terraform.tfstate .
+          aws s3 cp s3://${{ vars.BUCKET }}/terraform.tfstate .
           terraform init
           terraform apply -auto-approve -var-file=../terraform.tfvars
-          aws s3 cp terraform.tfstate s3://${{ var.BUCKET }}
+          aws s3 cp terraform.tfstate s3://${{ vars.BUCKET }}
