@@ -88,6 +88,7 @@ jobs:
       - name: Copy k8s file
         working-directory: terraform/
         run: |
+          cp deploy-k8s/K8s-provider.tf create-aws-infra/
           cp deploy-k8s/Kubernetes.tf create-aws-infra/
 
       - name: Deploy application to EKS using terraform
