@@ -34,7 +34,7 @@ resource "kubernetes_deployment" "Application" {
 
       spec {
         container {
-          image = "${data.aws_ecr_image.application_image.image_uri}:${var.image_version}"
+          image = "pedroquessada/my-backend" #"${data.aws_ecr_image.application_image.image_uri}:${var.image_version}"
           name  = "${var.prefix}-${var.repository_name}"
 
           resources {
