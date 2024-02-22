@@ -19,6 +19,14 @@ resource "kubernetes_deployment" "Application" {
   spec {
     replicas = 2
 
+    strategy {
+      type = "RollingUpdate"
+      rolling_update {
+        max_surge       = 1
+        max_unavailable = 1
+      }
+    }
+
     selector {
       match_labels = {
         nome = "${var.prefix}-${var.repository_name}"
@@ -61,65 +69,4 @@ resource "kubernetes_deployment" "Application" {
       }
     }
   }
-}
-
-resource "kubernetes_service" "LoadBalancer" {
-  metadata {
-    name = "${var.prefix}-${var.repository_name}"
-  }
-  spec {
-    selector = {
-      nome = "${var.prefix}-${var.repository_name}"
-    }
-    port {
-      port        = 3000
-      target_port = 3000
-    }
-    type = "LoadBalancer"
-  }
-}
-
-# TESTAR
-# resource "kubernetes_horizontal_pod_autoscaler" "hpa" {
-#   metadata {
-#     name = "${var.prefix}-${var.repository_name}"
-#   }
-
-#   spec {
-#     min_replicas = 1
-#     max_replicas = 10
-
-#     scale_target_ref {
-#       kind = "Deployment"
-#       name = "${var.prefix}-${var.repository_name}"
-#     }
-
-#     metric {
-#       type = "Resource"
-
-#       resource {
-#         name   = "cpu"
-#         target {
-#           type = "Utilization"
-#           average_utilization = 70
-#         }
-#       }
-#     }
-#   }
-# }
-
-locals {
-  lb_name = kubernetes_service.LoadBalancer.status.0.load_balancer.0.ingress.0.hostname
-}
-
-data "aws_elb" "LoadBalancer" {
-  name = split("-", split(".", local.lb_name).0).0
-}
-
-output "lb_hostname" {
-  value = local.lb_name
-}
-
-output "lb_info" {
-  value = data.aws_elb.LoadBalancer
 }
