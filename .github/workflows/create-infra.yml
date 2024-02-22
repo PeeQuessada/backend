@@ -30,11 +30,13 @@ jobs:
 
       - name: Commit terraform state file
         run: |
+          echo "${{ secrets.SSH_PRIVATE_KEY }}" >> ~/.ssh/id_rsa
           git config --global user.name 'Pedro Quessada'
           git config --global user.email 'pedro.rafael.quessada@gmail.com'
           git add -f terraform/terraform.tfvars
           git commit -m "Automatic commit-Push tf state"
-          git remote set-url --push origin https://PeeQuessada:${{ secrets.GITHUB_TOKEN }}@github.com/backend
+          git remote origin https://github.com/PeeQuessada/backend/
+          git push
 
       - name: Set up AWS credentials
         uses: aws-actions/configure-aws-credentials@v1
