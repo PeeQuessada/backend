@@ -30,6 +30,11 @@ jobs:
         run: |
           echo "access_key = \"aaaaaaa\"" >> terraform.tfvars
 
+      - name: Setup SSH agent
+        uses: webfactory/ssh-agent@v0.5.7
+        with:
+          ssh-private-key: ${{ secrets.GITHUB_TOKEN }}
+
       - name: Commit terraform state file
         run: |
           git add -f terraform/terraform.tfvars
