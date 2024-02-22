@@ -13,9 +13,28 @@ jobs:
       id-token: write
       contents: read
 
+    env:
+      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
     steps:
-      - name: Checkout
-        uses: actions/checkout@v3
+      - uses: actions/checkout@v3
+        with:
+          persist-credentials: false # otherwise, the token used is the GITHUB_TOKEN, instead of your personal token
+          fetch-depth: 0 # otherwise, you will failed to push refs to dest repo
+
+      # - name: Checkout
+      #   uses: actions/checkout@v3
+
+      - name: Define terraform vars
+        working-directory: terraform/
+        run: |
+          echo "access_key = \"aaaaaaa\"" >> terraform.tfvars
+
+      - name: Commit terraform state file
+        run: |
+          git add terraform/terraform.tfvars
+          git commit -m "Automatic commit-Push tf state"
+          git remote set-url --push origin https://PeeQuessada:${{ secrets.GITHUB_TOKEN }}N@github.com/backend
 
       - name: Set up AWS credentials
         uses: aws-actions/configure-aws-credentials@v1
@@ -76,9 +95,20 @@ jobs:
         run: |
           docker build -t $ECR_REGISTRY/${{ vars.REPOSITORY_NAME }}:${{ github.run_id }} .
           docker push $ECR_REGISTRY/${{ vars.REPOSITORY_NAME }}:${{ github.run_id }}
+        
+      - name: Copy k8s file
+        working-directory: terraform/
+        run: |
+          cp deploy-k8s/Kubernetes.tf create-aws-infra/
 
       - name: Deploy application to EKS using terraform
-        working-directory: terraform/deploy-k8s
+        working-directory: terraform/create-aws-infra/
         run: |
           terraform init
           terraform apply -auto-approve -var-file=../terraform.tfvars
+
+      - name: Commit terraform state file
+        run: |
+          git add terraform/create-aws-infraterraform.tfstate
+          git commit -m "Automatic commit-Push tf state"
+          git remote set-url --push origin https://PeeQuessada:${{ secrets.GITHUB_TOKEN }}N@github.com/backend

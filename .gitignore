@@ -3,7 +3,6 @@ npm-debug.log
 package-lock.json
 .terraform.lock.hcl
 .terraform.tfstate.lock.info
-terraform.tfstate
 terraform.tfstate.backup
 /env/.terraform
 /.terraform
