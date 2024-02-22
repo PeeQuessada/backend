@@ -19,6 +19,14 @@ resource "kubernetes_deployment" "Application" {
   spec {
     replicas = 2
 
+    strategy {
+      type = "RollingUpdate"
+      rolling_update {
+        max_surge       = 1
+        max_unavailable = 1
+      }
+    }
+
     selector {
       match_labels = {
         nome = "${var.prefix}-${var.repository_name}"
@@ -34,17 +42,17 @@ resource "kubernetes_deployment" "Application" {
 
       spec {
         container {
-          image = "${data.aws_ecr_image.application_image.image_uri}"
+          image = "${data.aws_ecr_image.application_image.image_uri}:${var.image_version}"
           name  = "${var.prefix}-${var.repository_name}"
 
           resources {
             limits = {
-              cpu    = "250m"
-              memory = "256Mi"
+              cpu    = "0.5"
+              memory = "512Mi"
             }
             requests = {
               cpu    = "250m"
-              memory = "128Mi"
+              memory = "50Mi"
             }
           }
 
