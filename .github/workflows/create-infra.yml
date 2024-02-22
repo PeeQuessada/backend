@@ -36,18 +36,19 @@ jobs:
       - name: Define terraform vars
         working-directory: terraform/
         run: |
+          ls
           echo "access_key = \"${{ secrets.AWS_ACCESS_KEY_ID }}\"" >> terraform.tfvars
           echo "secret_key = \"${{ secrets.AWS_SECRET_ACCESS_KEY }}\"" >> terraform.tfvars
           echo "session_token = \"${{ secrets.AWS_SESSION_TOKEN }}\"" >> terraform.tfvars
           echo "user_id = \"${{ secrets.AWS_USER_ID }}\"" >> terraform.tfvars
           echo "image_version = \"${{ github.run_id }}\"" >> terraform.tfvars
           echo "region = \"${{ vars.REGION }}\"" >> terraform.tfvars
-          echo "prefix = \"${{ github.run_id }}\"" >> terraform.tfvars
-          echo "repository_name = \"${{ github.run_id }}\"" >> terraform.tfvars
-          echo "cluster_name = \"${{ github.run_id }}\"" >> terraform.tfvars
-          # echo "prefix = \"${{ vars.PREFIX }}\"" >> terraform.tfvars
-          # echo "repository_name = \"${{ vars.REPOSITORY_NAME }}\"" >> terraform.tfvars
-          # echo "cluster_name = \"${{ vars.CLUSTER_NAME }}\"" >> terraform.tfvars
+          # echo "prefix = \"${{ github.run_id }}\"" >> terraform.tfvars
+          # echo "repository_name = \"${{ github.run_id }}\"" >> terraform.tfvars
+          # echo "cluster_name = \"${{ github.run_id }}\"" >> terraform.tfvars
+          echo "prefix = \"${{ vars.PREFIX }}\"" >> terraform.tfvars
+          echo "repository_name = \"${{ vars.REPOSITORY_NAME }}\"" >> terraform.tfvars
+          echo "cluster_name = \"${{ vars.CLUSTER_NAME }}\"" >> terraform.tfvars
           
 
       - name: Create AWS
@@ -66,8 +67,12 @@ jobs:
           export AWS_PROFILE=default
           cat ../terraform.tfvars
           terraform init
-          terraform apply -auto-approve -var-file=../terraform.tfvars    
+          terraform apply -auto-approve -var-file=../terraform.tfvars   
+          ls 
           cat terraform.tfstate   
+          export S3_URI=$(terraform output -raw s3_bucket_uri)
+          echo "URI do S3: $S3_URI"
+          aws s3 cp terraform.tfstate $S3_URI
 
       - name: Login to Amazon ECR
         id: login-ecr
