@@ -23,18 +23,18 @@ jobs:
           fetch-depth: 0 # otherwise, you will failed to push refs to dest repo
 
 
-      - name: Define terraform vars
-        working-directory: terraform/
-        run: |
-          echo "access_key = \"aaaaaaa\"" >> terraform.tfvars
+      # - name: Define terraform vars
+      #   working-directory: terraform/
+      #   run: |
+      #     echo "access_key = \"aaaaaaa\"" >> terraform.tfvars
 
-      - name: Commit terraform state file
-        run: |
-          git config --global user.name 'Pedro Quessada'
-          git config --global user.email 'pedro.rafael.quessada@gmail.com'
-          git add -f terraform/terraform.tfvars
-          git commit -m "Automatic commit-Push tf state"
-          git remote set-url --push origin https://PeeQuessada:${{ secrets.GITHUB_TOKEN }}@github.com/backend
+      # - name: Commit terraform state file
+      #   run: |
+      #     git config --global user.name 'Pedro Quessada'
+      #     git config --global user.email 'pedro.rafael.quessada@gmail.com'
+      #     git add -f terraform/terraform.tfvars
+      #     git commit -m "Automatic commit"
+      #     git remote set-url --push origin https://PeeQuessada:${{ secrets.GITHUB_TOKEN }}@github.com/backend
 
       - name: Set up AWS credentials
         uses: aws-actions/configure-aws-credentials@v1
@@ -107,8 +107,8 @@ jobs:
           terraform init
           terraform apply -auto-approve -var-file=../terraform.tfvars
 
-      - name: Commit terraform state file
-        run: |
-          git add terraform/create-aws-infraterraform.tfstate
-          git commit -m "Automatic commit-Push tf state"
-          git remote set-url --push origin https://PeeQuessada:${{ secrets.GITHUB_TOKEN }}N@github.com/backend
+      # - name: Commit terraform state file
+      #   run: |
+      #     git add terraform/create-aws-infraterraform.tfstate
+      #     git commit -m "Automatic commit-Push tf state"
+      #     git remote set-url --push origin https://PeeQuessada:${{ secrets.GITHUB_TOKEN }}@github.com/backend
