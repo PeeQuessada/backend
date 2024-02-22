@@ -45,6 +45,7 @@ jobs:
           echo "region = \"${{ vars.REGION }}\"" >> terraform.tfvars
           echo "prefix = \"${{ vars.PREFIX }}\"" >> terraform.tfvars
           echo "repository_name = \"${{ vars.REPOSITORY_NAME }}\"" >> terraform.tfvars
+          echo "cluster_name = \"${{ vars.CLUSTER_NAME }}\"" >> terraform.tfvars
           echo "bucket_name = \"${{ vars.BUCKET }}\"" >> terraform.tfvars
           
       - name: Create AWS

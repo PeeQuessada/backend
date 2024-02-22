@@ -61,7 +61,6 @@ jobs:
           echo "repository_name = \"${{ vars.REPOSITORY_NAME}}\"" >> terraform.tfvars
           echo "cluster_name = \"${{ vars.CLUSTER_NAME}}\"" >> terraform.tfvars
           echo "image_version = \"${{ github.run_id }}\"" >> terraform.tfvars
-          echo "bucket_name = \"${{ vars.BUCKET }}\"" >> terraform.tfvars
   
       - name: Create AWS config
         working-directory: terraform/cicd-app

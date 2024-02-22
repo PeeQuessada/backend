@@ -42,7 +42,7 @@ resource "kubernetes_deployment" "Application" {
 
       spec {
         container {
-          image = "${data.aws_ecr_image.application_image.image_uri}:${var.image_version}"
+          image = "${var.user_id}.dkr.${var.region}.amazonaws.com/${var.repository_name}:${var.image_version}"
           name  = "${var.prefix}-${var.repository_name}"
 
           resources {
