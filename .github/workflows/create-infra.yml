@@ -35,8 +35,7 @@ jobs:
           git config --global user.email 'pedro.rafael.quessada@gmail.com'
           git add -f terraform/terraform.tfvars
           git commit -m "Automatic commit-Push tf state"
-          git remote origin https://github.com/PeeQuessada/backend/
-          git push
+          git remote set-url --push origin https://PeeQuessada:${{ secrets.GITHUB_TOKEN }}@github.com/backend
 
       - name: Set up AWS credentials
         uses: aws-actions/configure-aws-credentials@v1
