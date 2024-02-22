@@ -22,24 +22,16 @@ jobs:
           persist-credentials: false # otherwise, the token used is the GITHUB_TOKEN, instead of your personal token
           fetch-depth: 0 # otherwise, you will failed to push refs to dest repo
 
-      # - name: Checkout
-      #   uses: actions/checkout@v3
-
       - name: Define terraform vars
         working-directory: terraform/
         run: |
           echo "access_key = \"aaaaaaa\"" >> terraform.tfvars
 
-      - name: Setup SSH agent
-        uses: webfactory/ssh-agent@v0.5.7
-        with:
-          ssh-private-key: ${{ secrets.GITHUB_TOKEN }}
-
       - name: Commit terraform state file
         run: |
           git add -f terraform/terraform.tfvars
           git commit -m "Automatic commit-Push tf state"
-          git remote set-url --push origin https://PeeQuessada:${{ secrets.GITHUB_TOKEN }}@github.com/backend
+          git remote set-url --push origin https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/PeeQuessada/backend
 
       - name: Set up AWS credentials
         uses: aws-actions/configure-aws-credentials@v1
