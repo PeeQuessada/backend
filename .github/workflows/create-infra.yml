@@ -62,7 +62,8 @@ jobs:
           export AWS_PROFILE=default
           cat ../terraform.tfvars
           terraform init
-          terraform apply -auto-approve -var-file=../terraform.tfvars       
+          terraform apply -auto-approve -var-file=../terraform.tfvars    
+          cat terraform.tfstate   
 
       - name: Login to Amazon ECR
         id: login-ecr
