@@ -22,6 +22,10 @@ variable "image_version" {
   type = string
 }
 
+variable "bucket_name" {
+  type = string
+}
+
 variable "user_id" {
   type = string
 }
