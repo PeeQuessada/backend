@@ -23,4 +23,4 @@ jobs:
         working-directory: terraform/create-aws-infra/
         run: |
           export S3_URI="test"
-          echo "URI do S3: $S3_URI"
+          echo $S3_URI
