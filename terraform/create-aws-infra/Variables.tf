@@ -18,6 +18,10 @@ variable "cluster_name" {
   type = string
 }
 
+variable "image_version" {
+  type = string
+}
+
 variable "user_id" {
   type = string
 }
