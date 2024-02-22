@@ -116,13 +116,13 @@ resource "kubernetes_service" "LoadBalancer" {
 #   }
 # }
 
-# locals {
-#   lb_name = kubernetes_service.LoadBalancer.status.0.load_balancer.0.ingress.0.hostname
-# }
+locals {
+  lb_name = kubernetes_service.LoadBalancer.status.0.load_balancer.0.ingress.0.hostname
+}
 
-# data "aws_elb" "LoadBalancer" {
-#   name = split("-", split(".", local.lb_name).0).0
-# }
+data "aws_elb" "LoadBalancer" {
+  name = split("-", split(".", local.lb_name).0).0
+}
 
 output "lb_hostname" {
   value = "test"#local.lb_name
