@@ -1,5 +1,5 @@
 resource "aws_s3_bucket" "s3bucket" {
-  bucket = "${var.prefix}-${var.repository_name}-${var.image_version}"
+  bucket = var.bucket_name
 }
 
 resource "aws_s3_bucket_ownership_controls" "s3bucket" {

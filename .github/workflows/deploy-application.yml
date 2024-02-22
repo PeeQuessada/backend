@@ -61,6 +61,7 @@ jobs:
           echo "repository_name = \"${{ vars.REPOSITORY_NAME}}\"" >> terraform.tfvars
           echo "cluster_name = \"${{ vars.CLUSTER_NAME}}\"" >> terraform.tfvars
           echo "image_version = \"${{ github.run_id }}\"" >> terraform.tfvars
+          echo "bucket_name = \"${{ vars.BUCKET }}\"" >> terraform.tfvars
   
       - name: Create AWS config
         working-directory: terraform/cicd-app
@@ -82,7 +83,7 @@ jobs:
         run: |
           aws eks --region ${{ vars.CLUSTER_NAME}} update-kubeconfig --name ${{ vars.PREFIX}}-${{ vars.REPOSITORY_NAME}}-${{ vars.CLUSTER_NAME}}
           export KUBECONFIG=~/.kube/config
-          aws s3 cp s3://${{ var.bucket }}/terraform.tfstate .
+          aws s3 cp s3://${{ var.BUCKET }}/terraform.tfstate .
           terraform init
           terraform apply -auto-approve -var-file=../terraform.tfvars
-          aws s3 cp terraform.tfstate s3://${{ var.bucket }}
+          aws s3 cp terraform.tfstate s3://${{ var.BUCKET }}
