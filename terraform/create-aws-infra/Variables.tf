@@ -37,7 +37,3 @@ variable "secret_key" {
 variable "session_token" {
   type = string
 }
-
-variable "image_version" {
-  type = string
-}

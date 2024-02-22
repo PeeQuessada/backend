@@ -79,6 +79,7 @@ jobs:
           export AWS_PROFILE=default
           terraform init
           terraform apply -auto-approve -var-file=../terraform.tfvars
+          aws s3 cp terraform.tfstate $(terraform output -raw s3_bucket_uri)          
 
       - name: Login to Amazon ECR
         id: login-ecr
@@ -106,6 +107,7 @@ jobs:
         run: |
           terraform init
           terraform apply -auto-approve -var-file=../terraform.tfvars
+          aws s3 cp terraform.tfstate $(terraform output -raw s3_bucket_uri)
 
       # - name: Commit terraform state file
       #   run: |
