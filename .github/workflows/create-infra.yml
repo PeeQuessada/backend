@@ -90,9 +90,9 @@ jobs:
         run: |
           terraform init
           terraform apply -auto-approve -var-file=../terraform.tfvars
-          echo $(terraform output -raw s3_bucket_uri)
-          aws s3 cp terraform.tfstate $(terraform output -raw s3_bucket_uri)
-
+          export S3_URI=$(terraform output -raw s3_bucket_uri)
+          echo "URI do S3: $S3_URI"
+          aws s3 cp terraform.tfstate $S3_URI
       # - name: Commit terraform state file
       #   run: |
       #     git add terraform/create-aws-infraterraform.tfstate
