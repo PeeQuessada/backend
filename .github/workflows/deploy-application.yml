@@ -56,10 +56,10 @@ jobs:
           echo "secret_key = \"${{ secrets.AWS_SECRET_ACCESS_KEY }}\"" >> terraform.tfvars
           echo "session_token = \"${{ secrets.AWS_SESSION_TOKEN }}\"" >> terraform.tfvars
           echo "user_id = \"${{ secrets.AWS_USER_ID }}\"" >> terraform.tfvars
-          echo "region = \"${{ vars.REGION}}\"" >> terraform.tfvars
-          echo "prefix = \"${{ vars.PREFIX}}\"" >> terraform.tfvars
-          echo "repository_name = \"${{ vars.REPOSITORY_NAME}}\"" >> terraform.tfvars
-          echo "cluster_name = \"${{ vars.CLUSTER_NAME}}\"" >> terraform.tfvars
+          echo "region = \"${{ vars.REGION }}\"" >> terraform.tfvars
+          echo "prefix = \"${{ vars.PREFIX }}\"" >> terraform.tfvars
+          echo "repository_name = \"${{ vars.REPOSITORY_NAME }}\"" >> terraform.tfvars
+          echo "cluster_name = \"${{ vars.CLUSTER_NAME }}\"" >> terraform.tfvars
           echo "image_version = \"${{ github.run_id }}\"" >> terraform.tfvars
   
       - name: Create AWS config
@@ -74,13 +74,13 @@ jobs:
       - name: Config K8s to sync with EKS
         working-directory: terraform/cicd-app
         run: |
-          aws eks --region ${{ vars.CLUSTER_NAME}} update-kubeconfig --name ${{ vars.PREFIX}}-${{ vars.REPOSITORY_NAME}}-${{ vars.CLUSTER_NAME}}
+          aws eks --region ${{ vars.CLUSTER_NAME}} update-kubeconfig --name ${{ vars.PREFIX }}-${{ vars.REPOSITORY_NAME }}-${{ vars.CLUSTER_NAME }}
           export KUBECONFIG=~/.kube/config
 
       - name: Deploy application to EKS using terraform
         working-directory: terraform/cicd-app
         run: |
-          aws eks --region ${{ vars.CLUSTER_NAME}} update-kubeconfig --name ${{ vars.PREFIX}}-${{ vars.REPOSITORY_NAME}}-${{ vars.CLUSTER_NAME}}
+          aws eks --region ${{ vars.CLUSTER_NAME}} update-kubeconfig --name ${{ vars.PREFIX }}-${{ vars.REPOSITORY_NAME }}-${{ vars.CLUSTER_NAME }}
           export KUBECONFIG=~/.kube/config
           aws s3 cp s3://${{ vars.BUCKET }}/terraform.tfstate .
           terraform init

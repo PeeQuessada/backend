@@ -64,7 +64,7 @@ jobs:
           export AWS_PROFILE=default
           terraform init
           terraform apply -auto-approve -var-file=../terraform.tfvars   
-          # aws s3 cp terraform.tfstate s3://${{ vars.BUCKET }}
+          aws s3 cp terraform.tfstate s3://${{ vars.BUCKET }}
 
       - name: Login to Amazon ECR
         id: login-ecr
