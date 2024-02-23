@@ -64,6 +64,7 @@ jobs:
           export AWS_PROFILE=default
           terraform init
           terraform apply -auto-approve -var-file=../terraform.tfvars   
+          ls
           aws s3 cp terraform.tfstate s3://${{ vars.BUCKET }}
           aws s3 cp terraform.tfstate.backup s3://${{ vars.BUCKET }}
 
