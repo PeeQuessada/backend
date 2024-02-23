@@ -80,7 +80,7 @@ jobs:
       - name: Deploy application to EKS using terraform
         working-directory: terraform/cicd-app
         run: |
-          aws s3 cp s3://${{ vars.BUCKET }}/terraform.tfstate .
+          aws s3 cp s3://${{ vars.BUCKET }} .
           terraform init
           terraform apply -auto-approve -var-file=../terraform.tfvars
           aws s3 cp terraform.tfstate s3://${{ vars.BUCKET }}
