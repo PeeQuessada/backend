@@ -15,9 +15,9 @@ resource "aws_eks_node_group" "node" {
     node_role_arn = "arn:aws:iam::${var.user_id}:role/LabRole"
     subnet_ids = aws_subnet.public_subnet[*].id
     scaling_config {
-        desired_size = 3
+        desired_size = 2
         max_size = 4
-        min_size = 3
+        min_size = 2
     }
     depends_on = [ 
         # policies

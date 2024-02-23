@@ -63,7 +63,7 @@ jobs:
           echo "image_version = \"${{ github.run_id }}\"" >> terraform.tfvars
   
       - name: Create AWS config
-        working-directory: terraform/cicd-app
+        working-directory: terraform/create-aws-infra
         run: | 
           mkdir -p ~/.aws
           echo "[default]" >> ~/.aws/config
@@ -72,17 +72,19 @@ jobs:
           echo "aws_session_token = \"${{ secrets.AWS_SESSION_TOKEN }}\"" >> ~/.aws/config
 
       - name: Config K8s to sync with EKS
-        working-directory: terraform/cicd-app
+        working-directory: terraform/create-aws-infra
         run: |
           aws eks --region ${{ vars.REGION }} update-kubeconfig --name ${{ vars.PREFIX }}-${{ vars.REPOSITORY_NAME }}-${{ vars.CLUSTER_NAME }}
           export KUBECONFIG=~/.kube/config
 
       - name: Deploy application to EKS using terraform
-        working-directory: terraform/cicd-app
+        working-directory: terraform/create-aws-infra
         run: |
+          cp cicd-app/K8s-provider.tf create-aws-infra/
+          cp cicd-app/Kubernetes.tf create-aws-infra/
           aws s3 cp s3://${{ vars.BUCKET }}/terraform.tfstate .
-          aws s3 cp s3://${{ vars.BUCKET }}/terraform.tfstate.backup .
+          # aws s3 cp s3://${{ vars.BUCKET }}/terraform.tfstate.backup .
           terraform init
           terraform apply -auto-approve -var-file=../terraform.tfvars
           aws s3 cp terraform.tfstate s3://${{ vars.BUCKET }}
-          aws s3 cp terraform.tfstate.backup s3://${{ vars.BUCKET }}
+          # aws s3 cp terraform.tfstate.backup s3://${{ vars.BUCKET }}
