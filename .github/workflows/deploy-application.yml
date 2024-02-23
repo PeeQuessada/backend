@@ -77,11 +77,15 @@ jobs:
           aws eks --region ${{ vars.REGION }} update-kubeconfig --name ${{ vars.PREFIX }}-${{ vars.REPOSITORY_NAME }}-${{ vars.CLUSTER_NAME }}
           export KUBECONFIG=~/.kube/config
 
-      - name: Deploy application to EKS using terraform
-        working-directory: terraform/create-aws-infra
+      - name: Duplicate tf files
+        working-directory: terraform/
         run: |
           cp cicd-app/K8s-provider.tf create-aws-infra/
           cp cicd-app/Kubernetes.tf create-aws-infra/
+
+      - name: Deploy application to EKS using terraform
+        working-directory: terraform/create-aws-infra
+        run: |
           aws s3 cp s3://${{ vars.BUCKET }}/terraform.tfstate .
           # aws s3 cp s3://${{ vars.BUCKET }}/terraform.tfstate.backup .
           terraform init
