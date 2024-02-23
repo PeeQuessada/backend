@@ -74,14 +74,12 @@ jobs:
       - name: Config K8s to sync with EKS
         working-directory: terraform/cicd-app
         run: |
-          aws eks --region ${{ vars.CLUSTER_NAME}} update-kubeconfig --name ${{ vars.PREFIX }}-${{ vars.REPOSITORY_NAME }}-${{ vars.CLUSTER_NAME }}
+          aws eks --region ${{ vars.REGION }} update-kubeconfig --name ${{ vars.PREFIX }}-${{ vars.REPOSITORY_NAME }}-${{ vars.CLUSTER_NAME }}
           export KUBECONFIG=~/.kube/config
 
       - name: Deploy application to EKS using terraform
         working-directory: terraform/cicd-app
         run: |
-          aws eks --region ${{ vars.CLUSTER_NAME}} update-kubeconfig --name ${{ vars.PREFIX }}-${{ vars.REPOSITORY_NAME }}-${{ vars.CLUSTER_NAME }}
-          export KUBECONFIG=~/.kube/config
           aws s3 cp s3://${{ vars.BUCKET }}/terraform.tfstate .
           terraform init
           terraform apply -auto-approve -var-file=../terraform.tfvars
