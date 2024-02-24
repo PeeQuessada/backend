@@ -1,12 +1,8 @@
 node_modules
 npm-debug.log
 package-lock.json
-.terraform.lock.hcl
-.terraform.tfstate.lock.info
-terraform.tfstate.backup
-/env/.terraform
-/.terraform
-/terraform/.terraform
-/terraform/terraform.tfvars
-/terraform/create-aws-infra/.terraform
-/terraform/create-aws-infra/terraform.tfvars
+/terraform/**/.terraform
+/terraform/**/.terraform.lock.hcl
+/terraform/**/.terraform.tfstate.lock.info
+/terraform/**/terraform.tfvars
+/terraform/**/terraform.tfstate.backup
