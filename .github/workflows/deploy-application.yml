@@ -50,7 +50,7 @@ jobs:
           terraform_version: 1.6.1    
 
       - name: Define terraform vars
-        working-directory: terraform/
+        working-directory: terraform/aws/
         run: |
           echo "access_key = \"${{ secrets.AWS_ACCESS_KEY_ID }}\"" >> terraform.tfvars
           echo "secret_key = \"${{ secrets.AWS_SECRET_ACCESS_KEY }}\"" >> terraform.tfvars
@@ -64,13 +64,13 @@ jobs:
           echo "bucket_name = \"${{ vars.BUCKET }}\"" >> terraform.tfvars
 
       - name: Config K8s to sync with EKS
-        working-directory: terraform/create-aws-infra
+        working-directory: terraform/aws/deploy-app
         run: |
           aws eks --region ${{ vars.REGION }} update-kubeconfig --name ${{ vars.PREFIX }}-${{ vars.REPOSITORY_NAME }}-${{ vars.CLUSTER_NAME }}
           export KUBECONFIG=~/.kube/config
 
       - name: Deploy application to EKS using terraform
-        working-directory: terraform/deploy-app
+        working-directory: terraform/aws/deploy-app
         run: |
           terraform init
           terraform apply -auto-approve -var-file=../terraform.tfvars
