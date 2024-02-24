@@ -67,7 +67,6 @@ jobs:
       - name: Create infra using terraform
         working-directory: terraform/create-aws-infra
         run: | 
-          export AWS_PROFILE=default
           terraform init
           terraform apply -auto-approve -var-file=../terraform.tfvars   
 
