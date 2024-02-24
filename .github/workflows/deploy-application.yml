@@ -63,14 +63,14 @@ jobs:
           echo "image_version = \"${{ github.run_id }}\"" >> terraform.tfvars
           echo "bucket_name = \"${{ vars.BUCKET }}\"" >> terraform.tfvars
   
-      - name: Create AWS config
-        working-directory: terraform/create-aws-infra
-        run: | 
-          mkdir -p ~/.aws
-          echo "[default]" >> ~/.aws/config
-          echo "aws_access_key_id = \"${{ secrets.AWS_ACCESS_KEY_ID }}\"" >> ~/.aws/config
-          echo "aws_secret_access_key = \"${{ secrets.AWS_SECRET_ACCESS_KEY }}\"" >> ~/.aws/config
-          echo "aws_session_token = \"${{ secrets.AWS_SESSION_TOKEN }}\"" >> ~/.aws/config
+      # - name: Create AWS config
+      #   working-directory: terraform/create-aws-infra
+      #   run: | 
+      #     mkdir -p ~/.aws
+      #     echo "[default]" >> ~/.aws/config
+      #     echo "aws_access_key_id = \"${{ secrets.AWS_ACCESS_KEY_ID }}\"" >> ~/.aws/config
+      #     echo "aws_secret_access_key = \"${{ secrets.AWS_SECRET_ACCESS_KEY }}\"" >> ~/.aws/config
+      #     echo "aws_session_token = \"${{ secrets.AWS_SESSION_TOKEN }}\"" >> ~/.aws/config
 
       - name: Config K8s to sync with EKS
         working-directory: terraform/create-aws-infra
