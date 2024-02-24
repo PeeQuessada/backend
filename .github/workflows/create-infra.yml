@@ -19,13 +19,22 @@ jobs:
           persist-credentials: false # otherwise, the token used is the GITHUB_TOKEN, instead of your personal token
           fetch-depth: 0 # otherwise, you will failed to push refs to dest repo
 
-      - name: Set up AWS credentials
+      - name: Create AWS Auth1
         uses: aws-actions/configure-aws-credentials@v1
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-session-token: ${{ secrets.AWS_SESSION_TOKEN }}
           aws-region: ${{ vars.REGION }}
+
+      - name: Create AWS Auth2
+        working-directory: terraform/create-aws-infra
+        run: | 
+          mkdir -p ~/.aws
+          echo "[default]" >> ~/.aws/config
+          echo "aws_access_key_id = \"${{ secrets.AWS_ACCESS_KEY_ID }}\"" >> ~/.aws/config
+          echo "aws_secret_access_key = \"${{ secrets.AWS_SECRET_ACCESS_KEY }}\"" >> ~/.aws/config
+          echo "aws_session_token = \"${{ secrets.AWS_SESSION_TOKEN }}\"" >> ~/.aws/config
   
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v1
@@ -47,33 +56,28 @@ jobs:
           echo "repository_name = \"${{ vars.REPOSITORY_NAME }}\"" >> terraform.tfvars
           echo "cluster_name = \"${{ vars.CLUSTER_NAME }}\"" >> terraform.tfvars
           echo "bucket_name = \"${{ vars.BUCKET }}\"" >> terraform.tfvars
-          
-      - name: Create AWS
-        working-directory: terraform/create-aws-infra
-        run: | 
-          mkdir -p ~/.aws
-          echo "[default]" >> ~/.aws/config
-          echo "aws_access_key_id = \"${{ secrets.AWS_ACCESS_KEY_ID }}\"" >> ~/.aws/config
-          echo "aws_secret_access_key = \"${{ secrets.AWS_SECRET_ACCESS_KEY }}\"" >> ~/.aws/config
-          echo "aws_session_token = \"${{ secrets.AWS_SESSION_TOKEN }}\"" >> ~/.aws/config
+
+      # - name: Create S3 Bucket using terraform
+      #   working-directory: terraform/create-aws-bucket
+      #   run: | 
+      #     terraform init
+      #     terraform apply -auto-approve -var-file=../terraform.tfvars   
+      #     cp terraform.tfstate ../create-aws-infra
 
       - name: Create infra using terraform
         working-directory: terraform/create-aws-infra
         run: | 
-          cat ~/.aws/config
           export AWS_PROFILE=default
           terraform init
           terraform apply -auto-approve -var-file=../terraform.tfvars   
-          ls
-          aws s3 cp terraform.tfstate s3://${{ vars.BUCKET }}
-          # aws s3 cp terraform.tfstate.backup s3://${{ vars.BUCKET }}
 
+      #### Deploy app ####
       - name: Login to Amazon ECR
         id: login-ecr
         uses: aws-actions/amazon-ecr-login@v1
         with:
           registries: ${{ secrets.AWS_USER_ID }}
-          mask-password: "true" # see: https://github.com/aws-actions/amazon-ecr-login#docker-credentials
+          mask-password: "true"
 
       - name: Publish docker image on ERS
         working-directory: app/
@@ -83,17 +87,9 @@ jobs:
         run: |
           docker build -t $ECR_REGISTRY/${{ vars.REPOSITORY_NAME }}:${{ github.run_id }} .
           docker push $ECR_REGISTRY/${{ vars.REPOSITORY_NAME }}:${{ github.run_id }}
-        
-      - name: Copy k8s file
-        working-directory: terraform/
-        run: |
-          cp deploy-k8s/K8s-provider.tf create-aws-infra/
-          cp deploy-k8s/Kubernetes.tf create-aws-infra/
 
       - name: Deploy application to EKS using terraform
-        working-directory: terraform/create-aws-infra/
+        working-directory: terraform/deploy-k8s/
         run: |
           terraform init
           terraform apply -auto-approve -var-file=../terraform.tfvars
-          aws s3 cp terraform.tfstate s3://${{ vars.BUCKET }}
-          # aws s3 cp terraform.tfstate.backup s3://${{ vars.BUCKET }}

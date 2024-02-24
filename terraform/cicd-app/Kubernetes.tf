@@ -1,12 +1,3 @@
-data "aws_ecr_image" "application_image" {
-  repository_name = var.repository_name
-  image_tag = var.image_version
-}
-
-output "name" {
-  value = data.aws_ecr_image.application_image
-}
-
 resource "kubernetes_deployment" "Application" {
   metadata {
     name = "${var.prefix}-${var.repository_name}"
@@ -42,7 +33,7 @@ resource "kubernetes_deployment" "Application" {
 
       spec {
         container {
-          image = "${var.user_id}.dkr.ecr.${var.region}.amazonaws.com/${var.repository_name}:${var.image_version}"
+          image = "pedroquessada/my-backend"
           name  = "${var.prefix}-${var.repository_name}"
 
           resources {
@@ -95,6 +86,11 @@ data "aws_elb" "LoadBalancer" {
   name = split("-", split(".", local.lb_name).0).0
 }
 
+# data "aws_ecr_image" "application_image" {
+#   repository_name = var.repository_name
+#   image_tag       = var.image_version
+# }
+
 output "lb_hostname" {
   value = local.lb_name
 }
@@ -102,3 +98,7 @@ output "lb_hostname" {
 output "lb_info" {
   value = data.aws_elb.LoadBalancer
 }
+
+# output "image_name" {
+#   value = data.aws_ecr_image.application_image
+# }

@@ -1,6 +1,6 @@
 # main.tf
 module "infra" {
-  source = "/" 
+  source = "/"
 }
 
 output "infra" {

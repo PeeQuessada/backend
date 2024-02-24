@@ -1,7 +1,12 @@
 terraform {
+  backend "s3" {
+    bucket = "pedroquessadatest123456789dia23022024"
+    key    = "terraform/create-infra/terraform.tfstate"
+    region = "us-east-1"
+  }
   required_providers {
     aws = {
-      source = "hashicorp/aws"
+      source  = "hashicorp/aws"
       version = "~> 5.0"
     }
   }
@@ -13,5 +18,5 @@ provider "aws" {
 
   access_key = var.access_key
   secret_key = var.secret_key
-  token = var.session_token
+  token      = var.session_token
 }

@@ -1,5 +1,5 @@
 resource "aws_ecr_repository" "docker_repository" {
-  name = var.repository_name
+  name                 = var.repository_name
   image_tag_mutability = "MUTABLE"
 }
 
