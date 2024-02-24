@@ -34,7 +34,7 @@ jobs:
           terraform_version: 1.6.1    
       
       - name: Define terraform vars
-        working-directory: terraform/aws/
+        working-directory: terraform/aws/create-aws-infra
         run: |
           ls
           echo "access_key = \"${{ secrets.AWS_ACCESS_KEY_ID }}\"" >> terraform.tfvars
@@ -52,4 +52,4 @@ jobs:
         working-directory: terraform/aws/create-aws-infra
         run: | 
           terraform init
-          terraform apply -auto-approve -var-file=../terraform.tfvars   
+          terraform apply -auto-approve -var-file=terraform.tfvars   
