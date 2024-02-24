@@ -6,3 +6,4 @@ app/package-lock.json
 /terraform/**/.terraform.tfstate.lock.info
 /terraform/**/terraform.tfvars
 /terraform/**/terraform.tfstate.backup
+/terraform/**/credentials.json
