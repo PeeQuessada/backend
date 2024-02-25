@@ -22,12 +22,9 @@ jobs:
         with:
           credentials_json: ${{ secrets.GCP_CREDENTIALS }}
 
-    #   - name: Login to Amazon ECR
-    #     id: login-ecr
-    #     uses: aws-actions/amazon-ecr-login@v1
-    #     with:
-    #       registries: ${{ secrets.AWS_USER_ID }}
-    #       mask-password: "true"
+      - name: "Set up Cloud SDK"
+        uses: "google-github-actions/setup-gcloud@v1"
+
       - name: Configure Docker Client
         working-directory: app/
         run: |-
