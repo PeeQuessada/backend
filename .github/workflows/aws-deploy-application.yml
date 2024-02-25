@@ -1,4 +1,4 @@
-name: Deploy application to EKS
+name: Deploy application to AWS-EKS
 env:
   CI: ""
 on:

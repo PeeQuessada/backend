@@ -1,4 +1,4 @@
-name: Create aws resource using terraform
+name: Create AWS resources using terraform
 env:
   CI: ""
 on:
