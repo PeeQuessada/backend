@@ -16,16 +16,11 @@ jobs:
       contents: read
 
     steps:
-      - name: Checkout
-        uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
-    #   - name: Set up AWS credentials
-    #     uses: aws-actions/configure-aws-credentials@v1
-    #     with:
-    #       aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-    #       aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-    #       aws-session-token: ${{ secrets.AWS_SESSION_TOKEN }}
-    #       aws-region: ${{ vars.REGION}}
+      - uses: 'google-github-actions/auth@v0'
+        with:
+          credentials_json: ${{ secrets.GCP_CREDENTIALS }}
 
     #   - name: Login to Amazon ECR
     #     id: login-ecr
@@ -33,15 +28,19 @@ jobs:
     #     with:
     #       registries: ${{ secrets.AWS_USER_ID }}
     #       mask-password: "true"
+      - name: Configure Docker Client
+        working-directory: app/
+        run: |-
+          gcloud auth configure-docker --quiet
+          gcloud auth configure-docker ${{ vars.REGION }}-docker.pkg.dev --quiet
 
-    #   - name: Publish docker image on ERS2
-    #     working-directory: app/
-    #     shell: bash
-    #     env:
-    #       ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-    #     run: |
-    #       docker build -t ${{ secrets.AWS_USER_ID }}.dkr.ecr.${{ vars.REGION}}.amazonaws.com/${{ vars.REPOSITORY_NAME }}:${{ github.run_id }} .
-    #       docker push ${{ secrets.AWS_USER_ID }}.dkr.ecr.${{ vars.REGION}}.amazonaws.com/${{ vars.REPOSITORY_NAME }}:${{ github.run_id }}
+      - name: Publish docker image on ERS2
+        working-directory: app/
+        env:
+          GOOGLE_CREDENTIALS: ${{ secrets.GCP_CREDENTIALS }}
+        run: |
+          docker build -t ${{ vars.REGION }}-docker.pkg.dev/${{ vars.PROJECT_ID }}/docker-images-rep/app:${{ github.run_id }} .
+          docker push ${{ vars.REGION }}-docker.pkg.dev/${{ vars.PROJECT_ID }}/docker-images-rep/app:${{ github.run_id }}
 
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v1
@@ -50,21 +49,19 @@ jobs:
           terraform_version: 1.6.1    
 
       - name: Define terraform vars
-        working-directory: terraform/gcpdeploy-app
+        working-directory: terraform/gcp/deploy-app
         run: |
-          echo "access_key = \"${{ secrets.AWS_ACCESS_KEY_ID }}\"" >> terraform.tfvars
-          echo "secret_key = \"${{ secrets.AWS_SECRET_ACCESS_KEY }}\"" >> terraform.tfvars
-          echo "session_token = \"${{ secrets.AWS_SESSION_TOKEN }}\"" >> terraform.tfvars
-          echo "user_id = \"${{ secrets.AWS_USER_ID }}\"" >> terraform.tfvars
-          echo "region = \"${{ vars.REGION }}\"" >> terraform.tfvars
-          echo "prefix = \"${{ vars.PREFIX }}\"" >> terraform.tfvars
-          echo "repository_name = \"${{ vars.REPOSITORY_NAME }}\"" >> terraform.tfvars
-          echo "cluster_name = \"${{ vars.CLUSTER_NAME }}\"" >> terraform.tfvars
           echo "image_version = \"${{ github.run_id }}\"" >> terraform.tfvars
+          echo "region = \"${{ vars.REGION }}\"" >> terraform.tfvars
+          echo "zone = \"${{ vars.ZONE }}\"" >> terraform.tfvars
+          echo "prefix = \"${{ vars.PREFIX }}\"" >> terraform.tfvars
+          echo "project_id = \"${{ vars.PROJECT_ID }}\"" >> terraform.tfvars
           echo "bucket_name = \"${{ vars.BUCKET }}\"" >> terraform.tfvars
 
       - name: Create infra using terraform
-        working-directory: terraform/gcpcreate-aws-infra
+        working-directory: terraform/gcp/create-aws-infra
+        env:
+          GOOGLE_CREDENTIALS: ${{ secrets.GCP_CREDENTIALS }}
         run: | 
           terraform init \
           -backend-config="bucket=${{ vars.BUCKET }}" \

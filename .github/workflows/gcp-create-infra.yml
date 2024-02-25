@@ -14,19 +14,12 @@ jobs:
       contents: read
 
     steps:
-      - uses: actions/checkout@v3
-        with:
-          persist-credentials: false # otherwise, the token used is the GITHUB_TOKEN, instead of your personal token
-          fetch-depth: 0 # otherwise, you will failed to push refs to dest repo
+      - uses: actions/checkout@v4
 
-    #   - name: Create AWS Auth
-    #     uses: aws-actions/configure-aws-credentials@v1
-    #     with:
-    #       aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-    #       aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-    #       aws-session-token: ${{ secrets.AWS_SESSION_TOKEN }}
-    #       aws-region: ${{ vars.REGION }}
-  
+      - uses: 'google-github-actions/auth@v0'
+        with:
+          credentials_json: ${{ secrets.GCP_CREDENTIALS }}
+          
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v1
         with:
@@ -34,22 +27,19 @@ jobs:
           terraform_version: 1.6.1    
       
       - name: Define terraform vars
-        working-directory: terraform/gcpcreate-aws-infra
+        working-directory: terraform/gcp/create-aws-infra
         run: |
-          ls
-          echo "access_key = \"${{ secrets.AWS_ACCESS_KEY_ID }}\"" >> terraform.tfvars
-          echo "secret_key = \"${{ secrets.AWS_SECRET_ACCESS_KEY }}\"" >> terraform.tfvars
-          echo "session_token = \"${{ secrets.AWS_SESSION_TOKEN }}\"" >> terraform.tfvars
-          echo "user_id = \"${{ secrets.AWS_USER_ID }}\"" >> terraform.tfvars
           echo "image_version = \"${{ github.run_id }}\"" >> terraform.tfvars
           echo "region = \"${{ vars.REGION }}\"" >> terraform.tfvars
+          echo "zone = \"${{ vars.ZONE }}\"" >> terraform.tfvars
           echo "prefix = \"${{ vars.PREFIX }}\"" >> terraform.tfvars
-          echo "repository_name = \"${{ vars.REPOSITORY_NAME }}\"" >> terraform.tfvars
-          echo "cluster_name = \"${{ vars.CLUSTER_NAME }}\"" >> terraform.tfvars
+          echo "project_id = \"${{ vars.PROJECT_ID }}\"" >> terraform.tfvars
           echo "bucket_name = \"${{ vars.BUCKET }}\"" >> terraform.tfvars
 
       - name: Create infra using terraform
-        working-directory: terraform/gcpcreate-aws-infra
+        working-directory: terraform/gcp/create-aws-infra
+        env:
+          GOOGLE_CREDENTIALS: ${{ secrets.GCP_CREDENTIALS }}
         run: | 
           terraform init \
           -backend-config="bucket=${{ vars.BUCKET }}" \
