@@ -51,5 +51,7 @@ jobs:
       - name: Create infra using terraform
         working-directory: terraform/gcpcreate-aws-infra
         run: | 
-          terraform init
+          terraform init \
+          -backend-config="bucket=${{ vars.BUCKET }}" \
+          -backend-config="prefix=terraform/state/infra"
           terraform apply -auto-approve -var-file=terraform.tfvars   

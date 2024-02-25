@@ -62,3 +62,11 @@ jobs:
           echo "cluster_name = \"${{ vars.CLUSTER_NAME }}\"" >> terraform.tfvars
           echo "image_version = \"${{ github.run_id }}\"" >> terraform.tfvars
           echo "bucket_name = \"${{ vars.BUCKET }}\"" >> terraform.tfvars
+
+      - name: Create infra using terraform
+        working-directory: terraform/gcpcreate-aws-infra
+        run: | 
+          terraform init \
+          -backend-config="bucket=${{ vars.BUCKET }}" \
+          -backend-config="prefix=terraform/state/infra"
+          terraform apply -auto-approve -var-file=terraform.tfvars   
