@@ -1,0 +1,55 @@
+name: Create GCP resources using terraform
+env:
+  CI: ""
+on:
+  workflow_dispatch:
+
+jobs:
+  apply:
+    name: 'terraform apply'
+    runs-on: ubuntu-20.04
+
+    permissions:
+      id-token: write
+      contents: read
+
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          persist-credentials: false # otherwise, the token used is the GITHUB_TOKEN, instead of your personal token
+          fetch-depth: 0 # otherwise, you will failed to push refs to dest repo
+
+    #   - name: Create AWS Auth
+    #     uses: aws-actions/configure-aws-credentials@v1
+    #     with:
+    #       aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+    #       aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+    #       aws-session-token: ${{ secrets.AWS_SESSION_TOKEN }}
+    #       aws-region: ${{ vars.REGION }}
+  
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v1
+        with:
+          terraform_wrapper: false
+          terraform_version: 1.6.1    
+      
+      - name: Define terraform vars
+        working-directory: terraform/gcpcreate-aws-infra
+        run: |
+          ls
+          echo "access_key = \"${{ secrets.AWS_ACCESS_KEY_ID }}\"" >> terraform.tfvars
+          echo "secret_key = \"${{ secrets.AWS_SECRET_ACCESS_KEY }}\"" >> terraform.tfvars
+          echo "session_token = \"${{ secrets.AWS_SESSION_TOKEN }}\"" >> terraform.tfvars
+          echo "user_id = \"${{ secrets.AWS_USER_ID }}\"" >> terraform.tfvars
+          echo "image_version = \"${{ github.run_id }}\"" >> terraform.tfvars
+          echo "region = \"${{ vars.REGION }}\"" >> terraform.tfvars
+          echo "prefix = \"${{ vars.PREFIX }}\"" >> terraform.tfvars
+          echo "repository_name = \"${{ vars.REPOSITORY_NAME }}\"" >> terraform.tfvars
+          echo "cluster_name = \"${{ vars.CLUSTER_NAME }}\"" >> terraform.tfvars
+          echo "bucket_name = \"${{ vars.BUCKET }}\"" >> terraform.tfvars
+
+      - name: Create infra using terraform
+        working-directory: terraform/gcpcreate-aws-infra
+        run: | 
+          terraform init
+          terraform apply -auto-approve -var-file=terraform.tfvars   
