@@ -56,7 +56,7 @@ jobs:
           echo "bucket_name = \"${{ vars.BUCKET }}\"" >> terraform.tfvars
 
       - name: Create infra using terraform
-        working-directory: terraform/gcp/create-aws-infra
+        working-directory: terraform/gcp/create-gcp-infra
         env:
           GOOGLE_CREDENTIALS: ${{ secrets.GCP_CREDENTIALS }}
         run: | 

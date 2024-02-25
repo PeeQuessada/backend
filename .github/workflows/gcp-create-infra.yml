@@ -30,7 +30,7 @@ jobs:
           terraform_version: 1.6.1    
       
       - name: Define terraform vars
-        working-directory: terraform/gcp/create-aws-infra
+        working-directory: terraform/gcp/create-gcp-infra
         run: |
           echo "image_version = \"${{ github.run_id }}\"" >> terraform.tfvars
           echo "region = \"${{ vars.REGION }}\"" >> terraform.tfvars
@@ -40,7 +40,7 @@ jobs:
           echo "bucket_name = \"${{ vars.BUCKET }}\"" >> terraform.tfvars
 
       - name: Create infra using terraform
-        working-directory: terraform/gcp/create-aws-infra
+        working-directory: terraform/gcp/create-gcp-infra
         env:
           GOOGLE_CREDENTIALS: ${{ secrets.GCP_CREDENTIALS }}
         run: | 
