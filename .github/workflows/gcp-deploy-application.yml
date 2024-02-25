@@ -62,5 +62,5 @@ jobs:
         run: | 
           terraform init \
           -backend-config="bucket=${{ vars.BUCKET }}" \
-          -backend-config="prefix=terraform/state/infra"
+          -backend-config="prefix=terraform/state/app"
           terraform apply -auto-approve -var-file=terraform.tfvars   
