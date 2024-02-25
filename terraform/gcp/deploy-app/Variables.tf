@@ -11,17 +11,17 @@ variable "zone" {
 
 variable "bucket_name" {
   type    = string
-  default = "us-central1-my-project-buckey-2"
+  default = "us-central1-my-project-buckey-3"
 }
 
 variable "prefix" {
   type    = string
-  default = "us-central1"
+  default = "tf"
 }
 
 variable "project_id" {
   type    = string
-  default = "terraform-test-1-pedroquessada"
+  default = "backend-test1-415414"
 }
 
 variable "image_version" {

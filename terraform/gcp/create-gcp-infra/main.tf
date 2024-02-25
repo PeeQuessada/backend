@@ -1,4 +1,7 @@
 # First steps
+# Enable K8s https://console.cloud.google.com/apis/api/container.googleapis.com/overview
+# Enable GAR https://console.cloud.google.com/apis/api/artifactregistry.googleapis.com/
+# https://console.cloud.google.com/apis/api/cloudresourcemanager.googleapis.com
 # Create IAM User and download creadentials in the current folder
 # export GOOGLE_APPLICATION_CREDENTIALS="./credentials.json"
 
@@ -9,8 +12,8 @@ terraform {
     local  = ">= 2.4.1"
   }
   backend "gcs" { # cloud storage
-    bucket = "us-central1-my-project-buckey-2"
-    prefix = "terraform/state/infra"
+    # bucket = "us-central1-my-project-buckey-3"
+    # prefix = "terraform/state/infra"
   }
 }
 

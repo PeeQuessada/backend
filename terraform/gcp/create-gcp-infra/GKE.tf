@@ -18,6 +18,15 @@ resource "google_container_cluster" "primary" {
   subnetwork = google_compute_subnetwork.subnet.name
 }
 
+resource "google_service_account" "kubernetes" {
+  account_id = "kubernetes"
+}
+
+resource "google_project_iam_member" "allow_image_pull" {
+  project = var.project_id
+  role   = "roles/artifactregistry.reader"
+  member  = "serviceAccount:${google_service_account.kubernetes.email}"
+}
 # Separately Managed Node Pool
 resource "google_container_node_pool" "primary_nodes" {
   name       = google_container_cluster.primary.name
@@ -28,9 +37,16 @@ resource "google_container_node_pool" "primary_nodes" {
   node_count = 2
 
   node_config {
+    service_account = google_service_account.kubernetes.email
+
     oauth_scopes = [
       "https://www.googleapis.com/auth/logging.write",
       "https://www.googleapis.com/auth/monitoring",
+      "https://www.googleapis.com/auth/ndev.clouddns.readwrite",
+      "https://www.googleapis.com/auth/devstorage.read_only",
+      "https://www.googleapis.com/auth/servicecontrol",
+      "https://www.googleapis.com/auth/service.management.readonly",
+      "https://www.googleapis.com/auth/trace.append",
     ]
 
     labels = {
