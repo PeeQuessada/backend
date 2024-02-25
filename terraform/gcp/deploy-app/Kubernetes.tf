@@ -33,7 +33,7 @@ resource "kubernetes_deployment" "Application" {
 
       spec {
         container {
-          image = "us-central1-docker.pkg.dev/backend-test1-415414/docker-images-rep/my-backend"
+          image = "${var.region}-docker.pkg.dev/${var.project_id}/docker-images-rep/app:${var.image_version}"
           name  = "${var.prefix}-${var.project_id}"
 
           resources {
