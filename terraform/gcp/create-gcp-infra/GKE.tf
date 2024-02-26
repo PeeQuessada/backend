@@ -9,7 +9,7 @@ resource "google_project_service" "enable_cloud_resource_manager_api" {
   disable_dependent_services = true
 }
 
-resource "google_project_service" "enable_container_api " {
+resource "google_project_service" "enable_container_api" {
   service                    = "container.googleapis.com"
   disable_dependent_services = true
 }
