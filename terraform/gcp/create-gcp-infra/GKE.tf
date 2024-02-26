@@ -4,16 +4,6 @@ data "google_container_engine_versions" "gke_version" {
   version_prefix = "1.27."
 }
 
-resource "google_project_service" "enable_cloud_resource_manager_api" {
-  service                    = "cloudresourcemanager.googleapis.com"
-  disable_dependent_services = true
-}
-
-resource "google_project_service" "enable_container_api" {
-  service                    = "container.googleapis.com"
-  disable_dependent_services = true
-}
-
 resource "google_container_cluster" "primary" {
   name     = "${var.project_id}-gke"
   location = var.zone
@@ -26,11 +16,6 @@ resource "google_container_cluster" "primary" {
 
   network    = google_compute_network.vpc.name
   subnetwork = google_compute_subnetwork.subnet.name
-
-  depends_on = [ 
-    google_project_service.enable_cloud_resource_manager_api, 
-    google_project_service.enable_container_api,
-  ]
 }
 
 resource "google_service_account" "kubernetes" {
