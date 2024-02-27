@@ -20,26 +20,27 @@ async function connectToDatabase() {
     try {
       await client.connect();
       console.log('Conectado ao banco de dados PostgreSQL');
+      return true;
     } catch (error) {
       console.error('Erro ao conectar-se ao banco de dados', error);
+      return false;
     } finally {
       // Certifique-se de fechar a conexão após usar
       // await client.end();
     }
 
-    try {
-        await insertContact('Cluster User', 'cluster.@user.com');
-        console.log('Conectado ao banco de dados PostgreSQL');
-      } catch (error) {
-        console.error('EErro ao inserir linha na tabela', error);
-      } finally {
-        // Certifique-se de fechar a conexão após usar
-        // await client.end();
-      }
+    // try {
+    //     await insertContact('John Doe', 'john.doe@example.com');
+    //     console.log('Conectado ao banco de dados PostgreSQL');
+    //   } catch (error) {
+    //     console.error('EErro ao inserir linha na tabela', error);
+    //   } finally {
+    //     // Certifique-se de fechar a conexão após usar
+    //     // await client.end();
+    // }
 }
   
 // Exemplo de uso da função de conexão
-connectToDatabase();
 
 /* -------------------------------------------------------------------------- */
 const app = express();
@@ -47,8 +48,16 @@ app.use(express.json());
 
 const fakeBD = [];
 
-app.get("/", (req, res, next) => {
-    res.send("Hello world from Google Cloud Plataform and Github Actions 2");
+app.get("/", async (req, res, next) => {
+    const resp = await connectToDatabase();
+
+    if(resp) {
+        res.send("Hello world Success :)");
+    }
+    else {
+        res.send("Hello world error :(");
+    }
+    
 });
 
 
@@ -65,8 +74,13 @@ app.post("/create", async (req, res, next) => {
         }
         console.log('newRecord:', newRecord.name);
         fakeBD.push(newRecord);
-        await insertContact(newRecord.name, newRecord.email);
-        res.status(200).json({message: "record created successfully"});
+        const resp = await insertContact(newRecord.name, newRecord.email);
+        if(resp && resp.success) {
+            res.status(200).json({message: "record created successfully"});
+        }
+        else {
+            res.status(200).json({message: "error to create record: " + resp.error});
+        }
     } catch (error) {
         res.status(500).json({message: error});
     }
@@ -128,7 +142,9 @@ async function insertContact(name, email) {
     try {
       const result = await client.query(query, values);
       console.log('Linha inserida com sucesso:', result.rows[0]);
+      return {success: true};
     } catch (error) {
       console.error('Erro ao inserir linha na tabela', error);
+      return {success: false, error: error};
     }
 }
