@@ -43,8 +43,8 @@ resource "google_sql_database_instance" "db-instance" {
       #   private_network = var.network_id
       
       authorized_networks {
-        name = "my-local-ip"
-        value = "34.27.206.29"
+        name = "cluster-ip"
+        value = "34.123.140.209"
       }
       # authorized_networks {
       #   name = "open-house"
