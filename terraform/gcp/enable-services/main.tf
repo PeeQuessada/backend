@@ -33,3 +33,13 @@ resource "google_project_service" "enable_sqladmin_api" {
   service                    = "sqladmin.googleapis.com"
   disable_dependent_services = true
 }
+
+resource "google_project_service" "enable_servicecontrol_api" {
+  service                    = "servicecontrol.googleapis.com"
+  disable_dependent_services = true
+}
+
+resource "google_project_service" "enable_apigateway_api" {
+  service                    = "apigateway.googleapis.com"
+  disable_dependent_services = true
+}
