@@ -28,7 +28,7 @@ async function connectToDatabase() {
     }
 
     try {
-        await insertContact('John Doe', 'john.doe@example.com');
+        await insertContact('Cluster User', 'cluster.@user.com');
         console.log('Conectado ao banco de dados PostgreSQL');
       } catch (error) {
         console.error('EErro ao inserir linha na tabela', error);
