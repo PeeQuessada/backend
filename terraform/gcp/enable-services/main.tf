@@ -28,3 +28,8 @@ resource "google_project_service" "enable_container_api" {
   service                    = "container.googleapis.com"
   disable_dependent_services = true
 }
+
+resource "google_project_service" "enable_sqladmin_api" {
+  service                    = "sqladmin.googleapis.com"
+  disable_dependent_services = true
+}
