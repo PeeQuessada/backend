@@ -74,13 +74,8 @@ app.post("/create", async (req, res, next) => {
         }
         console.log('newRecord:', newRecord.name);
         fakeBD.push(newRecord);
-        const resp = await insertContact(newRecord.name, newRecord.email);
-        if(resp && resp.success) {
-            res.status(200).json({message: "record created successfully"});
-        }
-        else {
-            res.status(200).json({message: "error to create record: " + resp.error});
-        }
+        await insertContact(newRecord.name, newRecord.email);
+        res.status(200).json({message: "record created successfully"});
     } catch (error) {
         res.status(500).json({message: error});
     }
@@ -142,9 +137,7 @@ async function insertContact(name, email) {
     try {
       const result = await client.query(query, values);
       console.log('Linha inserida com sucesso:', result.rows[0]);
-      return {success: true};
     } catch (error) {
       console.error('Erro ao inserir linha na tabela', error);
-      return {success: false, error: error};
     }
 }
