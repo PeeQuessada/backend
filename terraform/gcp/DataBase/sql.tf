@@ -44,7 +44,7 @@ resource "google_sql_database_instance" "db-instance" {
       
       authorized_networks {
         name = "my-local-ip"
-        value = "179.94.178.144"
+        value = "34.27.206.29"
       }
       # authorized_networks {
       #   name = "open-house"
