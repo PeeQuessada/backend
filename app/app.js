@@ -48,7 +48,7 @@ app.use(express.json());
 const fakeBD = [];
 
 app.get("/", (req, res, next) => {
-    res.send("Hello world from Google Cloud Plataform and Github Actions");
+    res.send("Hello world from Google Cloud Plataform and Github Actions 2");
 });
 
 
@@ -110,7 +110,7 @@ app.delete("/delete/:id", async (req, res, next) => {
     }
 });
 
-const port = process.env.PORT || 3000;
+const port = process.env.PORT || 3001;
 app.listen(port, () => {
     console.log(`Servidor rodando na porta ${port}`);
 });
