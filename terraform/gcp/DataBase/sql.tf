@@ -43,17 +43,22 @@ resource "google_sql_database_instance" "db-instance" {
       #   private_network = var.network_id
       
       authorized_networks {
+        name = "local-ip"
+        value = "179.94.178.144"
+      }
+      authorized_networks {
+        name = "loadbalancer-ip"
+        value = "34.27.206.29"
+      }
+      authorized_networks {
         name = "cluster-ip"
         value = "34.123.140.209"
       }
-      # authorized_networks {
-      #   name = "open-house"
-      #   value = "0.0.0.0/0"
-      # }
-      # authorized_networks {
-      #   name = "gke-network"
-      #   value = var.cidr
-      # }
+
+      authorized_networks {
+        name = "public-ip"
+        value = "0.0.0.0/0"
+      }
     }
   }
 }
