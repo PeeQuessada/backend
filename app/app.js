@@ -110,7 +110,7 @@ app.delete("/delete/:id", async (req, res, next) => {
     }
 });
 
-const port = process.env.PORT || 3001;
+const port = process.env.PORT || 3000;
 app.listen(port, () => {
     console.log(`Servidor rodando na porta ${port}`);
 });
