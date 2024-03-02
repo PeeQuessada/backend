@@ -39,15 +39,15 @@ jobs:
           echo "project_id = \"${{ vars.PROJECT_ID }}\"" >> terraform.tfvars
           echo "bucket_name = \"${{ vars.BUCKET }}\"" >> terraform.tfvars
 
-      # - name: Enable GCP services
-      #   working-directory: terraform/gcp/enable-services
-      #   env:
-      #     GOOGLE_CREDENTIALS: ${{ secrets.GCP_CREDENTIALS }}
-      #   run: | 
-      #     terraform init \
-      #     -backend-config="bucket=${{ vars.BUCKET }}" \
-      #     -backend-config="prefix=terraform/state/services"
-      #     terraform apply -auto-approve -var="project_id=${{ vars.PROJECT_ID }}" -var="region=${{ vars.REGION }}" -var="zone=${{ vars.ZONE }}" 
+      - name: Enable GCP services
+        working-directory: terraform/gcp/enable-services
+        env:
+          GOOGLE_CREDENTIALS: ${{ secrets.GCP_CREDENTIALS }}
+        run: | 
+          terraform init \
+          -backend-config="bucket=${{ vars.BUCKET }}" \
+          -backend-config="prefix=terraform/state/services"
+          terraform apply -auto-approve -var="project_id=${{ vars.PROJECT_ID }}" -var="region=${{ vars.REGION }}" -var="zone=${{ vars.ZONE }}" 
 
       - name: Create infra using terraform
         working-directory: terraform/gcp/create-gcp-infra
