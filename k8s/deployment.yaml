@@ -1,0 +1,24 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: app
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: app
+  template:
+    metadata:
+      labels:
+        app: app
+    spec:
+      containers:
+      - name: my-backend
+        image: pedroquessada/my-backend:latest
+        workingDir: /usr/api
+        resources:
+          limits:
+            memory: "128Mi"
+            cpu: "400m"
+        ports:
+        - containerPort: 3000
