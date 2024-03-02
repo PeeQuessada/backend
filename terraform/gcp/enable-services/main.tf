@@ -43,3 +43,8 @@ resource "google_project_service" "enable_apigateway_api" {
   service                    = "apigateway.googleapis.com"
   disable_dependent_services = true
 }
+
+resource "google_project_service" "enable_networksecurity_api" {
+  service                    = "networksecurity.googleapis.com"
+  disable_dependent_services = true
+}
