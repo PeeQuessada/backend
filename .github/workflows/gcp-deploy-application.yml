@@ -16,6 +16,7 @@ jobs:
       contents: read
 
     steps:
+      # Auth gcloud to gke --> gcloud container clusters get-credentials teste-416204-gke --region=us-central1-f
       - uses: actions/checkout@v4
 
       - uses: 'google-github-actions/auth@v0'
