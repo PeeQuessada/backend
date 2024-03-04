@@ -5,7 +5,7 @@ provider "google" {
 }
 
 data "google_container_cluster" "cluster" {
-  name     = "${var.project_id}-gke"
+  name     = "${var.prefix}-${var.project_id}-gke"
   location = var.zone
 }
 

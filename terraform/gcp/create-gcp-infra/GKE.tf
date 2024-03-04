@@ -5,7 +5,7 @@ data "google_container_engine_versions" "gke_version" {
 }
 
 resource "google_container_cluster" "primary" {
-  name     = "${var.project_id}-gke"
+  name     = "${var.prefix}-${var.project_id}-gke"
   location = var.zone
   deletion_protection = false
   # We can't create a cluster with no node pool defined, but we want to only use
@@ -57,7 +57,7 @@ resource "google_container_node_pool" "primary_nodes" {
 
     # preemptible  = true
     machine_type = "e2-medium"
-    tags         = ["gke-node", "${var.project_id}-gke"]
+    tags         = ["gke-node", "${var.prefix}-${var.project_id}-gke"]
     metadata = {
       disable-legacy-endpoints = "true"
     }    
